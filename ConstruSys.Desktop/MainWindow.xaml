@@ -1,12 +1,281 @@
 ﻿<Window x:Class="ConstruSys.Desktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ConstruSys.Desktop"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="ConstruSys"
+        Width="1400"
+        Height="850"
+        MinWidth="1100"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#F3F4F6">
+
+    <Window.Resources>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+
+                            <ContentPresenter VerticalAlignment="Center"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                 Value="True">
+
+                                <Setter Property="Background"
+                                    Value="#1F2937"/>
+
+                                <Setter Property="Foreground"
+                                    Value="White"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- MENU LATERAL -->
+        <Border Grid.Column="0"
+                Background="#111827">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="90"/>
+                </Grid.RowDefinitions>
+
+                <!-- LOGO -->
+                <StackPanel Grid.Row="0"
+                            VerticalAlignment="Center"
+                            Margin="25,0">
+
+                    <TextBlock Text="ConstruSys"
+                               Foreground="White"
+                               FontSize="26"
+                               FontWeight="Bold"/>
+
+                    <TextBlock Text="Gestão para materiais de construção"
+                               Margin="0,4,0,0"
+                               Foreground="#9CA3AF"
+                               FontSize="11"/>
+
+                </StackPanel>
+
+                <!-- MENU -->
+                <ScrollViewer Grid.Row="1"
+                              VerticalScrollBarVisibility="Auto">
+
+                    <StackPanel Margin="15,10">
+
+                        <Button Content="Dashboard"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Dashboard"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="PDV"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="PDV"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Vendas"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Vendas"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Orçamentos"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Orcamentos"
+                                Click="MenuButton_Click"/>
+
+                        <Separator Margin="0,15"/>
+
+                        <Button Content="Produtos"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Produtos"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Estoque"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Estoque"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Compras"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Compras"
+                                Click="MenuButton_Click"/>
+
+                        <Separator Margin="0,15"/>
+
+                        <Button Content="Clientes"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Clientes"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Fornecedores"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Fornecedores"
+                                Click="MenuButton_Click"/>
+
+                        <Separator Margin="0,15"/>
+
+                        <Button Content="Caixa"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Caixa"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Financeiro"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Financeiro"
+                                Click="MenuButton_Click"/>
+
+                        <Button Content="Relatórios"
+                                Height="45"
+                                Margin="0,4"
+                                HorizontalContentAlignment="Left"
+                                Padding="18,0"
+                                Tag="Relatorios"
+                                Click="MenuButton_Click"/>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+
+                <!-- USUÁRIO -->
+                <Border Grid.Row="2"
+                        BorderBrush="#374151"
+                        BorderThickness="0,1,0,0"
+                        Padding="20">
+
+                    <StackPanel VerticalAlignment="Center">
+
+                        <TextBlock Text="Administrador"
+                                   Foreground="White"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="Usuário logado"
+                                   Margin="0,3,0,0"
+                                   Foreground="#9CA3AF"
+                                   FontSize="11"/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+
+        </Border>
+
+        <!-- ÁREA PRINCIPAL -->
+        <Grid Grid.Column="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- TOPO -->
+            <Border Grid.Row="0"
+                    Background="White"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="0,0,0,1">
+
+                <Grid Margin="25,0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="ConstruSys"
+                               VerticalAlignment="Center"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#111827"/>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+
+                        <TextBlock Text="Sistema de Gestão"
+                                   VerticalAlignment="Center"
+                                   Foreground="#6B7280"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+
+            <!-- CONTEÚDO -->
+            <ContentControl x:Name="MainContent"
+                            Grid.Row="1"/>
+
+        </Grid>
+
     </Grid>
+
 </Window>

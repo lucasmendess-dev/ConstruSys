@@ -25,9 +25,6 @@
     <Folder Include="Styles\" />
     <Folder Include="Resources\" />
     <Folder Include="ViewModels\" />
-    <Folder Include="Views\Dashboard\" />
-    <Folder Include="Views\Clientes\" />
-    <Folder Include="Views\Estoque\" />
     <Folder Include="Views\Fornecedores\" />
     <Folder Include="Views\Compras\" />
     <Folder Include="Views\Caixa\" />
@@ -35,8 +32,6 @@
     <Folder Include="Views\Configuracoes\" />
     <Folder Include="Views\Orcamentos\" />
     <Folder Include="Views\Vendas\" />
-    <Folder Include="Views\PDV\" />
-    <Folder Include="Views\Produtos\" />
   </ItemGroup>
 
   <ItemGroup>
