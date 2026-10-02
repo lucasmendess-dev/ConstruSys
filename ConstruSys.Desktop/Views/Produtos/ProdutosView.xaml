@@ -18,6 +18,125 @@
 
         </Style>
 
+        <!-- BOTÃO BASE -->
+
+        <Style x:Key="BotaoBase"
+               TargetType="Button">
+
+            <Setter Property="Height"
+                    Value="30"/>
+
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+
+            <Setter Property="FontSize"
+                    Value="12"/>
+
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center"/>
+
+        </Style>
+
+        <!-- BOTÃO STATUS -->
+
+        <Style x:Key="BotaoStatus"
+               TargetType="Button"
+               BasedOn="{StaticResource BotaoBase}">
+
+            <Setter Property="Background"
+                    Value="#FFFBEB"/>
+
+            <Setter Property="Foreground"
+                    Value="#B45309"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#FDE68A"/>
+
+        </Style>
+
+        <!-- BOTÃO MENU -->
+
+        <Style x:Key="BotaoMenu"
+               TargetType="ToggleButton">
+
+            <Setter Property="Width"
+                    Value="34"/>
+
+            <Setter Property="Height"
+                    Value="30"/>
+
+            <Setter Property="Background"
+                    Value="#F9FAFB"/>
+
+            <Setter Property="Foreground"
+                    Value="#374151"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#D1D5DB"/>
+
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+
+            <Setter Property="FontSize"
+                    Value="18"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+        </Style>
+
+        <!-- ITEM MENU -->
+
+        <Style x:Key="BotaoMenuItem"
+               TargetType="Button">
+
+            <Setter Property="Height"
+                    Value="34"/>
+
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left"/>
+
+            <Setter Property="Padding"
+                    Value="12,0"/>
+
+            <Setter Property="Background"
+                    Value="White"/>
+
+            <Setter Property="Foreground"
+                    Value="#374151"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+            <Setter Property="FontSize"
+                    Value="12"/>
+
+            <Style.Triggers>
+
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+
+                    <Setter Property="Background"
+                            Value="#F3F4F6"/>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
     </UserControl.Resources>
 
     <Grid Background="#F3F4F6">
@@ -25,13 +144,21 @@
         <Grid Margin="30">
 
             <Grid.RowDefinitions>
+
                 <RowDefinition Height="Auto"/>
+
                 <RowDefinition Height="20"/>
+
                 <RowDefinition Height="Auto"/>
+
                 <RowDefinition Height="20"/>
+
                 <RowDefinition Height="Auto"/>
+
                 <RowDefinition Height="20"/>
+
                 <RowDefinition Height="*"/>
+
             </Grid.RowDefinitions>
 
             <!-- CABEÇALHO -->
@@ -39,21 +166,20 @@
             <Grid Grid.Row="0">
 
                 <Grid.ColumnDefinitions>
+
                     <ColumnDefinition Width="*"/>
+
                     <ColumnDefinition Width="Auto"/>
+
                 </Grid.ColumnDefinitions>
 
                 <StackPanel>
 
                     <TextBlock Text="Produtos"
-                               FontSize="30"
-                               FontWeight="SemiBold"
-                               Foreground="#111827"/>
+                           Style="{StaticResource PageTitle}"/>
 
                     <TextBlock Text="Gerencie produtos, preços e estoque"
-                               Margin="0,5,0,0"
-                               FontSize="14"
-                               Foreground="#6B7280"/>
+                           Style="{StaticResource PageSubtitle}"/>
 
                 </StackPanel>
 
@@ -75,16 +201,22 @@
             <Grid Grid.Row="2">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="15"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="15"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="15"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <!-- TOTAL -->
+                    <ColumnDefinition Width="*"/>
+
+                    <ColumnDefinition Width="15"/>
+
+                    <ColumnDefinition Width="*"/>
+
+                    <ColumnDefinition Width="15"/>
+
+                    <ColumnDefinition Width="*"/>
+
+                    <ColumnDefinition Width="15"/>
+
+                    <ColumnDefinition Width="*"/>
+
+                </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0"
                         Style="{StaticResource CardStyle}">
@@ -106,8 +238,6 @@
 
                 </Border>
 
-                <!-- ATIVOS -->
-
                 <Border Grid.Column="2"
                         Style="{StaticResource CardStyle}">
 
@@ -128,8 +258,6 @@
 
                 </Border>
 
-                <!-- ESTOQUE BAIXO -->
-
                 <Border Grid.Column="4"
                         Style="{StaticResource CardStyle}">
 
@@ -149,8 +277,6 @@
                     </StackPanel>
 
                 </Border>
-
-                <!-- SEM ESTOQUE -->
 
                 <Border Grid.Column="6"
                         Style="{StaticResource CardStyle}">
@@ -184,11 +310,17 @@
                 <Grid>
 
                     <Grid.ColumnDefinitions>
+
                         <ColumnDefinition Width="*"/>
+
                         <ColumnDefinition Width="15"/>
+
                         <ColumnDefinition Width="190"/>
+
                         <ColumnDefinition Width="15"/>
+
                         <ColumnDefinition Width="110"/>
+
                     </Grid.ColumnDefinitions>
 
                     <TextBox x:Name="TxtPesquisa"
@@ -241,16 +373,23 @@
                 <Grid>
 
                     <Grid.RowDefinitions>
+
                         <RowDefinition Height="Auto"/>
+
                         <RowDefinition Height="15"/>
+
                         <RowDefinition Height="*"/>
+
                     </Grid.RowDefinitions>
 
                     <Grid>
 
                         <Grid.ColumnDefinitions>
+
                             <ColumnDefinition Width="*"/>
+
                             <ColumnDefinition Width="Auto"/>
+
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Text="Produtos cadastrados"
@@ -292,10 +431,10 @@
                                                 Width="120"/>
 
                             <DataGridTextColumn Header="Estoque"
-                                                Binding="{Binding EstoqueAtual, StringFormat=N3}"
+                                                Binding="{Binding EstoqueAtual, StringFormat={}{0:0.###}}"
                                                 Width="85"/>
 
-                            <!-- STATUS ESTOQUE -->
+                            <!-- SITUAÇÃO ESTOQUE -->
 
                             <DataGridTemplateColumn Header="Situação"
                                                     Width="110">
@@ -438,31 +577,27 @@
                             <!-- AÇÕES -->
 
                             <DataGridTemplateColumn Header="Ações"
-                                                    Width="175">
+                                                    Width="155">
 
                                 <DataGridTemplateColumn.CellTemplate>
 
                                     <DataTemplate>
 
                                         <StackPanel Orientation="Horizontal"
-                                                    HorizontalAlignment="Center">
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
 
-                                            <Button Content="Editar"
-                                                    Width="62"
-                                                    Height="28"
-                                                    Margin="2"
-                                                    Tag="{Binding}"
-                                                    Click="EditarProduto_Click"/>
+                                            <!-- ATIVAR / INATIVAR -->
 
                                             <Button Width="82"
-                                                    Height="28"
-                                                    Margin="2"
+                                                    Margin="0,0,6,0"
                                                     Tag="{Binding}"
                                                     Click="AlterarStatusProduto_Click">
 
                                                 <Button.Style>
 
-                                                    <Style TargetType="Button">
+                                                    <Style TargetType="Button"
+                                                           BasedOn="{StaticResource BotaoStatus}">
 
                                                         <Setter Property="Content"
                                                                 Value="Inativar"/>
@@ -475,6 +610,15 @@
                                                                 <Setter Property="Content"
                                                                         Value="Ativar"/>
 
+                                                                <Setter Property="Background"
+                                                                        Value="#ECFDF5"/>
+
+                                                                <Setter Property="Foreground"
+                                                                        Value="#047857"/>
+
+                                                                <Setter Property="BorderBrush"
+                                                                        Value="#A7F3D0"/>
+
                                                             </DataTrigger>
 
                                                         </Style.Triggers>
@@ -484,6 +628,55 @@
                                                 </Button.Style>
 
                                             </Button>
+
+                                            <!-- DROPDOWN -->
+
+                                            <Grid>
+
+                                                <ToggleButton x:Name="BtnMenu"
+                                                              Content="⋮"
+                                                              Style="{StaticResource BotaoMenu}"/>
+
+                                                <Popup IsOpen="{Binding IsChecked, ElementName=BtnMenu}"
+                                                       PlacementTarget="{Binding ElementName=BtnMenu}"
+                                                       Placement="Bottom"
+                                                       StaysOpen="False"
+                                                       AllowsTransparency="True">
+
+                                                    <Border Background="White"
+                                                            BorderBrush="#D1D5DB"
+                                                            BorderThickness="1"
+                                                            CornerRadius="6"
+                                                            Padding="4"
+                                                            Width="130">
+
+                                                        <StackPanel>
+
+                                                            <Button Content="Visualizar"
+                                                                    Style="{StaticResource BotaoMenuItem}"
+                                                                    Tag="{Binding}"
+                                                                    Click="VisualizarProduto_Click"/>
+
+                                                            <Button Content="Editar"
+                                                                    Style="{StaticResource BotaoMenuItem}"
+                                                                    Tag="{Binding}"
+                                                                    Click="EditarProduto_Click"/>
+
+                                                            <Separator Margin="4"/>
+
+                                                            <Button Content="Excluir"
+                                                                    Style="{StaticResource BotaoMenuItem}"
+                                                                    Foreground="#DC2626"
+                                                                    Tag="{Binding}"
+                                                                    Click="ExcluirProduto_Click"/>
+
+                                                        </StackPanel>
+
+                                                    </Border>
+
+                                                </Popup>
+
+                                            </Grid>
 
                                         </StackPanel>
 

@@ -6,7 +6,11 @@ namespace ConstruSys.Domain.Interfaces
     {
         Task<List<Produto>> ObterTodosAsync();
 
+        Task<List<Produto>> ObterExcluidosAsync();
+
         Task<Produto?> ObterPorIdAsync(int id);
+
+        Task<Produto?> ObterExcluidoPorIdAsync(int id);
 
         Task<List<Produto>> PesquisarAsync(string termo);
 
@@ -16,7 +20,13 @@ namespace ConstruSys.Domain.Interfaces
 
         Task ExcluirAsync(int id);
 
-        Task AlterarStatusAsync(int id, bool ativo);
+        Task RestaurarAsync(int id);
+
+        Task ExcluirDefinitivamenteAsync(int id);
+
+        Task AlterarStatusAsync(
+            int id,
+            bool ativo);
 
         Task<bool> CodigoExisteAsync(
             string codigo,

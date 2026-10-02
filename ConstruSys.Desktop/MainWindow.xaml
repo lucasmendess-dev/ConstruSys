@@ -7,41 +7,84 @@
         MinWidth="1100"
         MinHeight="700"
         WindowStartupLocation="CenterScreen"
-        Background="#F3F4F6">
+        WindowState="Maximized"
+        Background="#F4F6F8">
 
     <Window.Resources>
 
-        <Style TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#D1D5DB"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Cursor" Value="Hand"/>
+        <!-- ====================================================== -->
+        <!-- MENU LATERAL                                           -->
+        <!-- ====================================================== -->
+
+        <Style x:Key="MenuButtonStyle"
+               TargetType="Button">
+
+            <Setter Property="Height"
+                    Value="44"/>
+
+            <Setter Property="Margin"
+                    Value="10,2"/>
+
+            <Setter Property="Padding"
+                    Value="14,0"/>
+
+            <Setter Property="Background"
+                    Value="Transparent"/>
+
+            <Setter Property="Foreground"
+                    Value="#CBD5E1"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+
+            <Setter Property="FontSize"
+                    Value="13"/>
+
+            <Setter Property="FontWeight"
+                    Value="Medium"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left"/>
 
             <Setter Property="Template">
+
                 <Setter.Value>
 
                     <ControlTemplate TargetType="Button">
 
-                        <Border Background="{TemplateBinding Background}"
-                            CornerRadius="8"
-                            Padding="{TemplateBinding Padding}">
+                        <Border x:Name="MenuBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="7"
+                                Padding="{TemplateBinding Padding}">
 
                             <ContentPresenter VerticalAlignment="Center"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                              HorizontalAlignment="Left"/>
 
                         </Border>
 
                         <ControlTemplate.Triggers>
 
                             <Trigger Property="IsMouseOver"
-                                 Value="True">
+                                     Value="True">
 
-                                <Setter Property="Background"
-                                    Value="#1F2937"/>
+                                <Setter TargetName="MenuBorder"
+                                        Property="Background"
+                                        Value="#1E293B"/>
 
                                 <Setter Property="Foreground"
-                                    Value="White"/>
+                                        Value="White"/>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
+                                <Setter TargetName="MenuBorder"
+                                        Property="Background"
+                                        Value="#263449"/>
 
                             </Trigger>
 
@@ -50,6 +93,113 @@
                     </ControlTemplate>
 
                 </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+        <!-- ====================================================== -->
+        <!-- TÍTULO DAS SEÇÕES                                      -->
+        <!-- ====================================================== -->
+
+        <Style x:Key="MenuSectionTitle"
+               TargetType="TextBlock">
+
+            <Setter Property="Foreground"
+                    Value="#64748B"/>
+
+            <Setter Property="FontSize"
+                    Value="10"/>
+
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+
+            <Setter Property="Margin"
+                    Value="24,20,0,7"/>
+
+        </Style>
+
+        <!-- ====================================================== -->
+        <!-- SCROLLBAR MODERNA                                      -->
+        <!-- ====================================================== -->
+
+        <Style x:Key="SidebarThumbStyle"
+               TargetType="Thumb">
+
+            <Setter Property="Background"
+                    Value="#334155"/>
+
+            <Setter Property="Width"
+                    Value="5"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Thumb">
+
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="3"/>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+        <Style x:Key="SidebarScrollBarStyle"
+               TargetType="ScrollBar">
+
+            <Setter Property="Width"
+                    Value="7"/>
+
+            <Setter Property="Background"
+                    Value="Transparent"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="ScrollBar">
+
+                        <Grid Background="Transparent">
+
+                            <Track x:Name="PART_Track"
+                                   IsDirectionReversed="True"
+                                   Focusable="False">
+
+                                <Track.DecreaseRepeatButton>
+
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}"
+                                                  Opacity="0"
+                                                  Focusable="False"/>
+
+                                </Track.DecreaseRepeatButton>
+
+                                <Track.Thumb>
+
+                                    <Thumb Style="{StaticResource SidebarThumbStyle}"/>
+
+                                </Track.Thumb>
+
+                                <Track.IncreaseRepeatButton>
+
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"
+                                                  Opacity="0"
+                                                  Focusable="False"/>
+
+                                </Track.IncreaseRepeatButton>
+
+                            </Track>
+
+                        </Grid>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
             </Setter>
 
         </Style>
@@ -59,169 +209,281 @@
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
+
+            <ColumnDefinition Width="265"/>
+
             <ColumnDefinition Width="*"/>
+
         </Grid.ColumnDefinitions>
 
-        <!-- MENU LATERAL -->
+        <!-- ====================================================== -->
+        <!-- SIDEBAR                                                -->
+        <!-- ====================================================== -->
+
         <Border Grid.Column="0"
-                Background="#111827">
+                Background="#0F172A">
 
             <Grid>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="90"/>
+
+                    <RowDefinition Height="105"/>
+
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="90"/>
+
+                    <RowDefinition Height="88"/>
+
                 </Grid.RowDefinitions>
 
-                <!-- LOGO -->
-                <StackPanel Grid.Row="0"
-                            VerticalAlignment="Center"
-                            Margin="25,0">
+                <!-- ================================================== -->
+                <!-- MARCA                                              -->
+                <!-- ================================================== -->
 
-                    <TextBlock Text="ConstruSys"
-                               Foreground="White"
-                               FontSize="26"
-                               FontWeight="Bold"/>
+                <Border Grid.Row="0"
+                        BorderBrush="#1E293B"
+                        BorderThickness="0,0,0,1">
 
-                    <TextBlock Text="Gestão para materiais de construção"
-                               Margin="0,4,0,0"
-                               Foreground="#9CA3AF"
-                               FontSize="11"/>
+                    <Grid Margin="20,0">
 
-                </StackPanel>
+                        <Grid.ColumnDefinitions>
 
-                <!-- MENU -->
+                            <ColumnDefinition Width="42"/>
+
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+
+                        <!-- ÍCONE / MONOGRAMA -->
+
+                        <Border Width="38"
+                                Height="38"
+                                CornerRadius="9"
+                                Background="#2563EB"
+                                VerticalAlignment="Center">
+
+                            <TextBlock Text="C"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <!-- LOGO -->
+
+                        <StackPanel Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center">
+
+                            <TextBlock Text="ConstruSys"
+                                       Foreground="White"
+                                       FontSize="23"
+                                       FontWeight="Bold"/>
+
+                            <TextBlock Text="Gestão para materiais de construção"
+                                       Margin="0,3,0,0"
+                                       Foreground="#94A3B8"
+                                       FontSize="10"/>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Border>
+
+                <!-- ================================================== -->
+                <!-- NAVEGAÇÃO                                          -->
+                <!-- ================================================== -->
+
                 <ScrollViewer Grid.Row="1"
-                              VerticalScrollBarVisibility="Auto">
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
 
-                    <StackPanel Margin="15,10">
+                    <ScrollViewer.Resources>
 
-                        <Button Content="Dashboard"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Style TargetType="ScrollBar"
+                               BasedOn="{StaticResource SidebarScrollBarStyle}"/>
+
+                    </ScrollViewer.Resources>
+
+                    <StackPanel x:Name="MenuPanel"
+                                Margin="0,4,4,15">
+
+                        <!-- PRINCIPAL -->
+
+                        <TextBlock Text="PRINCIPAL"
+                                   Style="{StaticResource MenuSectionTitle}"/>
+
+                        <Button x:Name="BtnDashboard"
+                                Content="Dashboard"
                                 Tag="Dashboard"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="PDV"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnPDV"
+                                Content="PDV"
                                 Tag="PDV"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Vendas"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnVendas"
+                                Content="Vendas"
                                 Tag="Vendas"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Orçamentos"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnOrcamentos"
+                                Content="Orçamentos"
                                 Tag="Orcamentos"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Separator Margin="0,15"/>
+                        <!-- CADASTROS -->
 
-                        <Button Content="Produtos"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <TextBlock Text="CADASTROS"
+                                   Style="{StaticResource MenuSectionTitle}"/>
+
+                        <Button x:Name="BtnProdutos"
+                                Content="Produtos"
                                 Tag="Produtos"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Estoque"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnEstoque"
+                                Content="Estoque"
                                 Tag="Estoque"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Compras"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnCompras"
+                                Content="Compras"
                                 Tag="Compras"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Separator Margin="0,15"/>
-
-                        <Button Content="Clientes"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnClientes"
+                                Content="Clientes"
                                 Tag="Clientes"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Fornecedores"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnFornecedores"
+                                Content="Fornecedores"
                                 Tag="Fornecedores"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Separator Margin="0,15"/>
+                        <!-- GESTÃO -->
 
-                        <Button Content="Caixa"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <TextBlock Text="GESTÃO"
+                                   Style="{StaticResource MenuSectionTitle}"/>
+
+                        <Button x:Name="BtnCaixa"
+                                Content="Caixa"
                                 Tag="Caixa"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Financeiro"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnFinanceiro"
+                                Content="Financeiro"
                                 Tag="Financeiro"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
-                        <Button Content="Relatórios"
-                                Height="45"
-                                Margin="0,4"
-                                HorizontalContentAlignment="Left"
-                                Padding="18,0"
+                        <Button x:Name="BtnRelatorios"
+                                Content="Relatórios"
                                 Tag="Relatorios"
+                                Style="{StaticResource MenuButtonStyle}"
+                                Click="MenuButton_Click"/>
+
+                        <!-- SISTEMA -->
+
+                        <TextBlock Text="SISTEMA"
+                                   Style="{StaticResource MenuSectionTitle}"/>
+
+                        <Button x:Name="BtnLixeira"
+                                Content="Lixeira"
+                                Tag="Lixeira"
+                                Style="{StaticResource MenuButtonStyle}"
+                                Click="MenuButton_Click"/>
+
+                        <Button x:Name="BtnConfiguracoes"
+                                Content="Configurações"
+                                Tag="Configuracoes"
+                                Style="{StaticResource MenuButtonStyle}"
                                 Click="MenuButton_Click"/>
 
                     </StackPanel>
 
                 </ScrollViewer>
 
-                <!-- USUÁRIO -->
+                <!-- ================================================== -->
+                <!-- USUÁRIO                                            -->
+                <!-- ================================================== -->
+
                 <Border Grid.Row="2"
-                        BorderBrush="#374151"
-                        BorderThickness="0,1,0,0"
-                        Padding="20">
+                        Background="#0B1220"
+                        BorderBrush="#1E293B"
+                        BorderThickness="0,1,0,0">
 
-                    <StackPanel VerticalAlignment="Center">
+                    <Grid Margin="18,0">
 
-                        <TextBlock Text="Administrador"
-                                   Foreground="White"
-                                   FontWeight="SemiBold"/>
+                        <Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Usuário logado"
-                                   Margin="0,3,0,0"
-                                   Foreground="#9CA3AF"
-                                   FontSize="11"/>
+                            <ColumnDefinition Width="40"/>
 
-                    </StackPanel>
+                            <ColumnDefinition Width="*"/>
+
+                            <ColumnDefinition Width="Auto"/>
+
+                        </Grid.ColumnDefinitions>
+
+                        <!-- AVATAR -->
+
+                        <Border Width="34"
+                                Height="34"
+                                CornerRadius="17"
+                                Background="#1E293B"
+                                VerticalAlignment="Center">
+
+                            <TextBlock Text="A"
+                                       Foreground="#E2E8F0"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <!-- DADOS -->
+
+                        <StackPanel Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center">
+
+                            <TextBlock Text="Administrador"
+                                       Foreground="#F8FAFC"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBlock Text="Usuário logado"
+                                       Margin="0,3,0,0"
+                                       Foreground="#64748B"
+                                       FontSize="10"/>
+
+                        </StackPanel>
+
+                        <!-- MENU FUTURO -->
+
+                        <TextBlock Grid.Column="2"
+                                   Text="⋮"
+                                   Foreground="#64748B"
+                                   FontSize="18"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"/>
+
+                    </Grid>
 
                 </Border>
 
@@ -229,48 +491,69 @@
 
         </Border>
 
-        <!-- ÁREA PRINCIPAL -->
+        <!-- ====================================================== -->
+        <!-- CONTEÚDO PRINCIPAL                                     -->
+        <!-- ====================================================== -->
+
         <Grid Grid.Column="1">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="70"/>
+
+                <RowDefinition Height="68"/>
+
                 <RowDefinition Height="*"/>
+
             </Grid.RowDefinitions>
 
-            <!-- TOPO -->
+            <!-- HEADER -->
+
             <Border Grid.Row="0"
                     Background="White"
                     BorderBrush="#E5E7EB"
                     BorderThickness="0,0,0,1">
 
-                <Grid Margin="25,0">
+                <Grid Margin="26,0">
 
                     <Grid.ColumnDefinitions>
+
                         <ColumnDefinition Width="*"/>
+
                         <ColumnDefinition Width="Auto"/>
+
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="ConstruSys"
-                               VerticalAlignment="Center"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#111827"/>
+                    <StackPanel VerticalAlignment="Center">
 
-                    <StackPanel Grid.Column="1"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Center">
+                        <TextBlock Text="ConstruSys"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"/>
 
-                        <TextBlock Text="Sistema de Gestão"
-                                   VerticalAlignment="Center"
-                                   Foreground="#6B7280"/>
+                        <TextBlock Text="Sistema de gestão comercial"
+                                   Margin="0,2,0,0"
+                                   FontSize="10"
+                                   Foreground="#9CA3AF"/>
 
                     </StackPanel>
+
+                    <Border Grid.Column="1"
+                            Background="#F8FAFC"
+                            CornerRadius="7"
+                            Padding="12,7"
+                            VerticalAlignment="Center">
+
+                        <TextBlock Text="Sistema de Gestão"
+                                   FontSize="11"
+                                   Foreground="#64748B"/>
+
+                    </Border>
 
                 </Grid>
 
             </Border>
 
-            <!-- CONTEÚDO -->
+            <!-- ÁREA DINÂMICA -->
+
             <ContentControl x:Name="MainContent"
                             Grid.Row="1"/>
 

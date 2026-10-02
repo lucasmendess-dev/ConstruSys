@@ -36,9 +36,13 @@
 
         public bool Ativo { get; set; } = true;
 
+        public bool Excluido { get; set; } = false;
+
         public DateTime DataCadastro { get; set; } = DateTime.Now;
 
         public DateTime? DataAtualizacao { get; set; }
+
+        public DateTime? DataExclusao { get; set; }
 
         public decimal MargemLucro
         {
@@ -69,7 +73,12 @@
         {
             get
             {
-                return Ativo ? "Ativo" : "Inativo";
+                if (Excluido)
+                    return "Excluído";
+
+                return Ativo
+                    ? "Ativo"
+                    : "Inativo";
             }
         }
     }

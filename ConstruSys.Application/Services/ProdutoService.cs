@@ -1,4 +1,5 @@
-﻿using ConstruSys.Domain.Entities;
+﻿using ConstruSys.Application.Helpers;
+using ConstruSys.Domain.Entities;
 using ConstruSys.Domain.Interfaces;
 
 namespace ConstruSys.Application.Services
@@ -10,13 +11,20 @@ namespace ConstruSys.Application.Services
         public ProdutoService(
             IProdutoRepository produtoRepository)
         {
-            _produtoRepository = produtoRepository;
+            _produtoRepository =
+                produtoRepository;
         }
 
         public async Task<List<Produto>> ObterTodosAsync()
         {
             return await _produtoRepository
                 .ObterTodosAsync();
+        }
+
+        public async Task<List<Produto>> ObterExcluidosAsync()
+        {
+            return await _produtoRepository
+                .ObterExcluidosAsync();
         }
 
         public async Task<List<Produto>> PesquisarAsync(
@@ -26,22 +34,33 @@ namespace ConstruSys.Application.Services
                 .PesquisarAsync(termo);
         }
 
-        public async Task<Produto?> ObterPorIdAsync(int id)
+        public async Task<Produto?> ObterPorIdAsync(
+            int id)
         {
             return await _produtoRepository
                 .ObterPorIdAsync(id);
         }
 
+        public async Task<Produto?> ObterExcluidoPorIdAsync(
+            int id)
+        {
+            return await _produtoRepository
+                .ObterExcluidoPorIdAsync(id);
+        }
+
         public async Task AdicionarAsync(
             Produto produto)
         {
+            Normalizar(produto);
+
             ValidarProduto(produto);
 
             if (await _produtoRepository
-                .CodigoExisteAsync(produto.Codigo))
+                .CodigoExisteAsync(
+                    produto.Codigo))
             {
                 throw new InvalidOperationException(
-                    "Já existe um produto cadastrado com esse código.");
+                    "Já existe um produto, inclusive na lixeira, com esse código.");
             }
 
             if (!string.IsNullOrWhiteSpace(
@@ -55,11 +74,15 @@ namespace ConstruSys.Application.Services
                 if (codigoBarrasExiste)
                 {
                     throw new InvalidOperationException(
-                        "Já existe um produto cadastrado com esse código de barras.");
+                        "Já existe um produto, inclusive na lixeira, com esse código de barras.");
                 }
             }
 
-            produto.DataCadastro = DateTime.Now;
+            produto.DataCadastro =
+                DateTime.Now;
+
+            produto.Excluido =
+                false;
 
             await _produtoRepository
                 .AdicionarAsync(produto);
@@ -68,6 +91,8 @@ namespace ConstruSys.Application.Services
         public async Task AtualizarAsync(
             Produto produto)
         {
+            Normalizar(produto);
+
             ValidarProduto(produto);
 
             if (await _produtoRepository
@@ -76,7 +101,7 @@ namespace ConstruSys.Application.Services
                     produto.Id))
             {
                 throw new InvalidOperationException(
-                    "Já existe outro produto cadastrado com esse código.");
+                    "Já existe outro produto com esse código.");
             }
 
             if (!string.IsNullOrWhiteSpace(
@@ -91,11 +116,12 @@ namespace ConstruSys.Application.Services
                 if (codigoBarrasExiste)
                 {
                     throw new InvalidOperationException(
-                        "Já existe outro produto cadastrado com esse código de barras.");
+                        "Já existe outro produto com esse código de barras.");
                 }
             }
 
-            produto.DataAtualizacao = DateTime.Now;
+            produto.DataAtualizacao =
+                DateTime.Now;
 
             await _produtoRepository
                 .AtualizarAsync(produto);
@@ -106,13 +132,70 @@ namespace ConstruSys.Application.Services
             bool ativo)
         {
             await _produtoRepository
-                .AlterarStatusAsync(id, ativo);
+                .AlterarStatusAsync(
+                    id,
+                    ativo);
         }
 
-        public async Task ExcluirAsync(int id)
+        public async Task ExcluirAsync(
+            int id)
         {
             await _produtoRepository
                 .ExcluirAsync(id);
+        }
+
+        public async Task RestaurarAsync(
+            int id)
+        {
+            await _produtoRepository
+                .RestaurarAsync(id);
+        }
+
+        public async Task ExcluirDefinitivamenteAsync(
+            int id)
+        {
+            await _produtoRepository
+                .ExcluirDefinitivamenteAsync(id);
+        }
+
+        private static void Normalizar(
+            Produto produto)
+        {
+            produto.Codigo =
+                TextoHelper.CaixaAlta(
+                    produto.Codigo);
+
+            produto.CodigoBarras =
+                TextoHelper.ApenasTrimOuNull(
+                    produto.CodigoBarras);
+
+            produto.Nome =
+                TextoHelper.CaixaAlta(
+                    produto.Nome);
+
+            produto.Descricao =
+                TextoHelper.CaixaAltaOuNull(
+                    produto.Descricao);
+
+            produto.Categoria =
+                TextoHelper.CaixaAltaOuNull(
+                    produto.Categoria);
+
+            produto.Subcategoria =
+                TextoHelper.CaixaAltaOuNull(
+                    produto.Subcategoria);
+
+            produto.Marca =
+                TextoHelper.CaixaAltaOuNull(
+                    produto.Marca);
+
+            produto.UnidadeMedida =
+                TextoHelper.CaixaAlta(
+                    produto.UnidadeMedida);
+
+            produto.LocalizacaoEstoque =
+                TextoHelper.CaixaAltaOuNull(
+                    produto.LocalizacaoEstoque);
         }
 
         private static void ValidarProduto(
@@ -161,6 +244,13 @@ namespace ConstruSys.Application.Services
             {
                 throw new ArgumentException(
                     "O estoque mínimo não pode ser negativo.");
+            }
+
+            if (produto.EstoqueMaximo.HasValue &&
+                produto.EstoqueMaximo < 0)
+            {
+                throw new ArgumentException(
+                    "O estoque máximo não pode ser negativo.");
             }
         }
     }

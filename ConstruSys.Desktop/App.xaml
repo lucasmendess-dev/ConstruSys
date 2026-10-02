@@ -1,7 +1,23 @@
 ﻿<Application x:Class="ConstruSys.Desktop.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Application.Resources>
 
+        <ResourceDictionary>
+
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="/ConstruSys.Desktop;component/Styles/Colors.xaml"/>
+                <ResourceDictionary Source="/ConstruSys.Desktop;component/Styles/Buttons.xaml"/>
+                <ResourceDictionary Source="/ConstruSys.Desktop;component/Styles/Inputs.xaml"/>
+                <ResourceDictionary Source="/ConstruSys.Desktop;component/Styles/Cards.xaml"/>
+                <ResourceDictionary Source="/ConstruSys.Desktop;component/Styles/DataGrid.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+
     </Application.Resources>
+
 </Application>

@@ -22,14 +22,12 @@
     <Folder Include="Commands\" />
     <Folder Include="Converters\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Styles\" />
     <Folder Include="Resources\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Fornecedores\" />
     <Folder Include="Views\Compras\" />
     <Folder Include="Views\Caixa\" />
     <Folder Include="Views\Financeiro\" />
-    <Folder Include="Views\Configuracoes\" />
     <Folder Include="Views\Orcamentos\" />
     <Folder Include="Views\Vendas\" />
   </ItemGroup>

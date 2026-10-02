@@ -1,25 +1,45 @@
 ﻿using ConstruSys.Application.Services;
 using ConstruSys.Desktop.Views.Clientes;
+using ConstruSys.Desktop.Views.Configuracoes;
 using ConstruSys.Desktop.Views.Dashboard;
 using ConstruSys.Desktop.Views.Estoque;
 using ConstruSys.Desktop.Views.PDV;
 using ConstruSys.Desktop.Views.Produtos;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ConstruSys.Desktop
 {
     public partial class MainWindow : Window
     {
         private readonly ProdutoService _produtoService;
+        private readonly ClienteService _clienteService;
+        private readonly EstoqueService _estoqueService;
 
-        public MainWindow(ProdutoService produtoService)
+        private Button? _botaoSelecionado;
+
+        public MainWindow(
+            ProdutoService produtoService,
+            ClienteService clienteService,
+            EstoqueService estoqueService)
         {
             InitializeComponent();
 
-            _produtoService = produtoService;
+            _produtoService =
+                produtoService;
 
-            MainContent.Content = new DashboardView();
+            _clienteService =
+                clienteService;
+
+            _estoqueService =
+                estoqueService;
+
+            MainContent.Content =
+                new DashboardView();
+
+            MarcarBotaoSelecionado(
+                BtnDashboard);
         }
 
         private void MenuButton_Click(
@@ -30,7 +50,11 @@ namespace ConstruSys.Desktop
                 return;
 
             string pagina =
-                button.Tag?.ToString() ?? string.Empty;
+                button.Tag?.ToString()
+                ?? string.Empty;
+
+            bool paginaValida =
+                true;
 
             switch (pagina)
             {
@@ -44,21 +68,25 @@ namespace ConstruSys.Desktop
                 case "Produtos":
 
                     MainContent.Content =
-                        new ProdutosView(_produtoService);
+                        new ProdutosView(
+                            _produtoService);
 
                     break;
 
                 case "Clientes":
 
                     MainContent.Content =
-                        new ClientesView();
+                        new ClientesView(
+                            _clienteService);
 
                     break;
 
                 case "Estoque":
 
                     MainContent.Content =
-                        new EstoqueView();
+                        new EstoqueView(
+                            _estoqueService,
+                            _produtoService);
 
                     break;
 
@@ -69,7 +97,19 @@ namespace ConstruSys.Desktop
 
                     break;
 
+                case "Lixeira":
+
+                    MainContent.Content =
+                        new LixeiraView(
+                            _clienteService,
+                            _produtoService);
+
+                    break;
+
                 default:
+
+                    paginaValida =
+                        false;
 
                     MessageBox.Show(
                         "Este módulo ainda será implementado.",
@@ -79,6 +119,42 @@ namespace ConstruSys.Desktop
 
                     break;
             }
+
+            if (paginaValida)
+            {
+                MarcarBotaoSelecionado(
+                    button);
+            }
+        }
+
+        private void MarcarBotaoSelecionado(
+            Button botao)
+        {
+            if (_botaoSelecionado != null)
+            {
+                _botaoSelecionado.Background =
+                    Brushes.Transparent;
+
+                _botaoSelecionado.Foreground =
+                    new SolidColorBrush(
+                        Color.FromRgb(
+                            203,
+                            213,
+                            225));
+            }
+
+            _botaoSelecionado =
+                botao;
+
+            botao.Background =
+                new SolidColorBrush(
+                    Color.FromRgb(
+                        30,
+                        41,
+                        59));
+
+            botao.Foreground =
+                Brushes.White;
         }
     }
 }

@@ -9,7 +9,8 @@ namespace ConstruSys.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
 
-        public ProdutoRepository(AppDbContext context)
+        public ProdutoRepository(
+            AppDbContext context)
         {
             _context = context;
         }
@@ -22,13 +23,35 @@ namespace ConstruSys.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Produto>> ObterExcluidosAsync()
+        {
+            return await _context.Produtos
+                .IgnoreQueryFilters()
+                .AsNoTracking()
+                .Where(p => p.Excluido)
+                .OrderByDescending(p => p.DataExclusao)
+                .ToListAsync();
+        }
+
         public async Task<Produto?> ObterPorIdAsync(int id)
         {
             return await _context.Produtos
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(
+                    p => p.Id == id);
         }
 
-        public async Task<List<Produto>> PesquisarAsync(string termo)
+        public async Task<Produto?> ObterExcluidoPorIdAsync(
+            int id)
+        {
+            return await _context.Produtos
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(
+                    p => p.Id == id &&
+                         p.Excluido);
+        }
+
+        public async Task<List<Produto>> PesquisarAsync(
+            string termo)
         {
             termo = termo.Trim();
 
@@ -50,14 +73,18 @@ namespace ConstruSys.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task AdicionarAsync(Produto produto)
+        public async Task AdicionarAsync(
+            Produto produto)
         {
+            produto.Excluido = false;
+
             _context.Produtos.Add(produto);
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task AtualizarAsync(Produto produto)
+        public async Task AtualizarAsync(
+            Produto produto)
         {
             _context.Produtos.Update(produto);
 
@@ -68,10 +95,65 @@ namespace ConstruSys.Infrastructure.Repositories
         {
             Produto? produto =
                 await _context.Produtos
-                    .FirstOrDefaultAsync(p => p.Id == id);
+                    .FirstOrDefaultAsync(
+                        p => p.Id == id);
 
             if (produto == null)
-                return;
+            {
+                throw new InvalidOperationException(
+                    "Produto não encontrado.");
+            }
+
+            produto.Excluido = true;
+            produto.Ativo = false;
+            produto.DataExclusao = DateTime.Now;
+            produto.DataAtualizacao = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RestaurarAsync(int id)
+        {
+            Produto? produto =
+                await _context.Produtos
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(
+                        p => p.Id == id &&
+                             p.Excluido);
+
+            if (produto == null)
+            {
+                throw new InvalidOperationException(
+                    "Produto excluído não encontrado.");
+            }
+
+            produto.Excluido = false;
+
+            // Restauramos como inativo para o administrador
+            // decidir se deve voltar a ser utilizado.
+            produto.Ativo = false;
+
+            produto.DataExclusao = null;
+            produto.DataAtualizacao = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ExcluirDefinitivamenteAsync(
+            int id)
+        {
+            Produto? produto =
+                await _context.Produtos
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(
+                        p => p.Id == id &&
+                             p.Excluido);
+
+            if (produto == null)
+            {
+                throw new InvalidOperationException(
+                    "Produto excluído não encontrado.");
+            }
 
             _context.Produtos.Remove(produto);
 
@@ -84,11 +166,14 @@ namespace ConstruSys.Infrastructure.Repositories
         {
             Produto? produto =
                 await _context.Produtos
-                    .FirstOrDefaultAsync(p => p.Id == id);
+                    .FirstOrDefaultAsync(
+                        p => p.Id == id);
 
             if (produto == null)
+            {
                 throw new InvalidOperationException(
                     "Produto não encontrado.");
+            }
 
             produto.Ativo = ativo;
             produto.DataAtualizacao = DateTime.Now;
@@ -102,14 +187,15 @@ namespace ConstruSys.Infrastructure.Repositories
         {
             IQueryable<Produto> query =
                 _context.Produtos
+                    .IgnoreQueryFilters()
                     .AsNoTracking()
-                    .Where(p => p.Codigo == codigo);
+                    .Where(p =>
+                        p.Codigo == codigo);
 
             if (ignorarId.HasValue)
             {
-                query =
-                    query.Where(
-                        p => p.Id != ignorarId.Value);
+                query = query.Where(
+                    p => p.Id != ignorarId.Value);
             }
 
             return await query.AnyAsync();
@@ -119,20 +205,23 @@ namespace ConstruSys.Infrastructure.Repositories
             string codigoBarras,
             int? ignorarId = null)
         {
-            if (string.IsNullOrWhiteSpace(codigoBarras))
+            if (string.IsNullOrWhiteSpace(
+                codigoBarras))
+            {
                 return false;
+            }
 
             IQueryable<Produto> query =
                 _context.Produtos
+                    .IgnoreQueryFilters()
                     .AsNoTracking()
-                    .Where(
-                        p => p.CodigoBarras == codigoBarras);
+                    .Where(p =>
+                        p.CodigoBarras == codigoBarras);
 
             if (ignorarId.HasValue)
             {
-                query =
-                    query.Where(
-                        p => p.Id != ignorarId.Value);
+                query = query.Where(
+                    p => p.Id != ignorarId.Value);
             }
 
             return await query.AnyAsync();

@@ -1,0 +1,466 @@
+﻿<Window x:Class="ConstruSys.Desktop.Views.Clientes.VisualizarCliente"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dados do Cliente"
+        Width="820"
+        Height="720"
+        MinWidth="720"
+        MinHeight="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#F3F4F6">
+
+    <Window.Resources>
+
+        <Style x:Key="TituloCampo"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="#6B7280"/>
+            <Setter Property="FontSize"
+                    Value="12"/>
+            <Setter Property="Margin"
+                    Value="0,0,0,5"/>
+        </Style>
+
+        <Style x:Key="ValorCampo"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="#111827"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+            <Setter Property="TextWrapping"
+                    Value="Wrap"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- CABEÇALHO -->
+
+        <Border Grid.Row="0"
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="0,0,0,1"
+                Padding="28,22">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+
+                    <TextBlock Text="Dados do Cliente"
+                               FontSize="25"
+                               FontWeight="SemiBold"
+                               Foreground="#111827"/>
+
+                    <TextBlock x:Name="TxtNomeCabecalho"
+                               Margin="0,5,0,0"
+                               Foreground="#6B7280"
+                               FontSize="14"/>
+
+                </StackPanel>
+
+                <Border x:Name="BadgeStatus"
+                        Grid.Column="1"
+                        Padding="12,6"
+                        CornerRadius="15"
+                        VerticalAlignment="Center"
+                        Background="#DCFCE7">
+
+                    <TextBlock x:Name="TxtStatus"
+                               Text="Ativo"
+                               Foreground="#166534"
+                               FontWeight="SemiBold"/>
+
+                </Border>
+
+            </Grid>
+
+        </Border>
+
+        <!-- CONTEÚDO -->
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+
+            <StackPanel Margin="28">
+
+                <!-- DADOS PRINCIPAIS -->
+
+                <Border Background="White"
+                        CornerRadius="10"
+                        Padding="24"
+                        Margin="0,0,0,18">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Dados principais"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,20"/>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="Tipo de pessoa"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtTipoPessoa"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="CPF / CNPJ"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtCpfCnpj"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="Nome / Razão Social"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtNome"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="Nome Fantasia"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtNomeFantasia"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="RG / Inscrição Estadual"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtRgIe"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="Limite de Crédito"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtLimiteCredito"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- CONTATO -->
+
+                <Border Background="White"
+                        CornerRadius="10"
+                        Padding="24"
+                        Margin="0,0,0,18">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Contato"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,20"/>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="Telefone"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtTelefone"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="WhatsApp"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtWhatsApp"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="3">
+
+                                <TextBlock Text="E-mail"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtEmail"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ENDEREÇO -->
+
+                <Border Background="White"
+                        CornerRadius="10"
+                        Padding="24"
+                        Margin="0,0,0,18">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Endereço"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,20"/>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="CEP"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtCep"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="Endereço"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtEndereco"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="Número"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtNumero"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="Complemento"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtComplemento"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4"
+                                        Grid.Column="0">
+
+                                <TextBlock Text="Bairro"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtBairro"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4"
+                                        Grid.Column="2">
+
+                                <TextBlock Text="Cidade / Estado"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtCidadeEstado"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- INFORMAÇÕES ADICIONAIS -->
+
+                <Border Background="White"
+                        CornerRadius="10"
+                        Padding="24">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Informações adicionais"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Observações"
+                                   Style="{StaticResource TituloCampo}"/>
+
+                        <TextBlock x:Name="TxtObservacoes"
+                                   Style="{StaticResource ValorCampo}"/>
+
+                        <Separator Margin="0,20"/>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+
+                                <TextBlock Text="Data de cadastro"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtDataCadastro"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+
+                                <TextBlock Text="Última atualização"
+                                           Style="{StaticResource TituloCampo}"/>
+
+                                <TextBlock x:Name="TxtDataAtualizacao"
+                                           Style="{StaticResource ValorCampo}"/>
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+        <!-- RODAPÉ -->
+
+        <Border Grid.Row="2"
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="0,1,0,0"
+                Padding="28,18">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="1"
+                        Content="Fechar"
+                        Height="38"
+                        Background="#111827"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontWeight="SemiBold"
+                        Cursor="Hand"
+                        Click="Fechar_Click"/>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+
+</Window>

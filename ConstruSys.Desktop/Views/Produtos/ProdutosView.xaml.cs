@@ -65,8 +65,7 @@ namespace ConstruSys.Desktop.Views.Produtos
                 _produtos.Count(
                     p =>
                         p.EstoqueAtual > 0 &&
-                        p.EstoqueAtual <=
-                        p.EstoqueMinimo)
+                        p.EstoqueAtual <= p.EstoqueMinimo)
                 .ToString();
 
             TxtCardSemEstoque.Text =
@@ -159,7 +158,8 @@ namespace ConstruSys.Desktop.Views.Produtos
                     .OrderBy(p => p.Nome)
                     .ToList();
 
-            GridProdutos.ItemsSource = lista;
+            GridProdutos.ItemsSource =
+                lista;
 
             TxtTotalProdutos.Text =
                 $"{lista.Count} produto(s)";
@@ -181,6 +181,51 @@ namespace ConstruSys.Desktop.Views.Produtos
             if (resultado == true)
             {
                 _ = CarregarProdutosAsync();
+            }
+        }
+
+        private async void VisualizarProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            if (sender is not Button button ||
+                button.Tag is not Produto produto)
+            {
+                return;
+            }
+
+            try
+            {
+                Produto? produtoBanco =
+                    await _produtoService
+                        .ObterPorIdAsync(produto.Id);
+
+                if (produtoBanco == null)
+                {
+                    MessageBox.Show(
+                        "Produto não encontrado.",
+                        "ConstruSys",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
+                }
+
+                VisualizarProduto janela =
+                    new(produtoBanco);
+
+                janela.Owner =
+                    Window.GetWindow(this);
+
+                janela.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Não foi possível visualizar o produto.\n\n{ex.Message}",
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -267,6 +312,51 @@ namespace ConstruSys.Desktop.Views.Produtos
             {
                 MessageBox.Show(
                     ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private async void ExcluirProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            if (sender is not Button button ||
+                button.Tag is not Produto produto)
+            {
+                return;
+            }
+
+            MessageBoxResult resultado =
+                MessageBox.Show(
+                    $"Deseja mover o produto para a lixeira?\n\n" +
+                    $"{produto.Nome}\n\n" +
+                    "O histórico será preservado e o produto poderá ser restaurado posteriormente.",
+                    "Mover Produto para Lixeira",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);   
+
+            if (resultado != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                await _produtoService
+                    .ExcluirAsync(produto.Id);
+
+                await CarregarProdutosAsync();
+
+                MessageBox.Show(
+                    "Produto movido para a lixeira com sucesso.",
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Não foi possível excluir o produto.\n\n{ex.Message}",
                     "ConstruSys",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);

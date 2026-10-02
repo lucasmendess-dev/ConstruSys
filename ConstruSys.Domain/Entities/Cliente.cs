@@ -38,10 +38,14 @@
 
         public bool Ativo { get; set; } = true;
 
+        public bool Excluido { get; set; } = false;
+
         public string? Observacoes { get; set; }
 
         public DateTime DataCadastro { get; set; } = DateTime.Now;
 
         public DateTime? DataAtualizacao { get; set; }
+
+        public DateTime? DataExclusao { get; set; }
     }
 }

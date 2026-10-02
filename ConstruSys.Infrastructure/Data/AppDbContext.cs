@@ -5,7 +5,8 @@ namespace ConstruSys.Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        public AppDbContext(
+            DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
@@ -18,7 +19,10 @@ namespace ConstruSys.Infrastructure.Data
 
         public DbSet<Usuario> Usuarios { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
+
+        protected override void OnModelCreating(
+            ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -26,9 +30,11 @@ namespace ConstruSys.Infrastructure.Data
             ConfigurarCliente(modelBuilder);
             ConfigurarFornecedor(modelBuilder);
             ConfigurarUsuario(modelBuilder);
+            ConfigurarMovimentacaoEstoque(modelBuilder);
         }
 
-        private static void ConfigurarProduto(ModelBuilder modelBuilder)
+        private static void ConfigurarProduto(
+            ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Produto>(entity =>
             {
@@ -89,15 +95,22 @@ namespace ConstruSys.Infrastructure.Data
                 entity.Property(x => x.Peso)
                     .HasPrecision(18, 3);
 
+                entity.Property(x => x.Excluido)
+                    .HasDefaultValue(false);
+
                 entity.Ignore(x => x.MargemLucro);
 
                 entity.Ignore(x => x.StatusEstoque);
-                
+
                 entity.Ignore(x => x.StatusCadastro);
+
+                entity.HasQueryFilter(
+                    x => !x.Excluido);
             });
         }
 
-        private static void ConfigurarCliente(ModelBuilder modelBuilder)
+        private static void ConfigurarCliente(
+            ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Cliente>(entity =>
             {
@@ -159,10 +172,17 @@ namespace ConstruSys.Infrastructure.Data
 
                 entity.Property(x => x.Observacoes)
                     .HasMaxLength(1000);
+
+                entity.Property(x => x.Excluido)
+                    .HasDefaultValue(false);
+
+                entity.HasQueryFilter(
+                    x => !x.Excluido);
             });
         }
 
-        private static void ConfigurarFornecedor(ModelBuilder modelBuilder)
+        private static void ConfigurarFornecedor(
+            ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Fornecedor>(entity =>
             {
@@ -228,7 +248,8 @@ namespace ConstruSys.Infrastructure.Data
             });
         }
 
-        private static void ConfigurarUsuario(ModelBuilder modelBuilder)
+        private static void ConfigurarUsuario(
+            ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Usuario>(entity =>
             {
@@ -254,6 +275,47 @@ namespace ConstruSys.Infrastructure.Data
                 entity.Property(x => x.Perfil)
                     .HasMaxLength(50)
                     .IsRequired();
+            });
+        }
+
+        private static void ConfigurarMovimentacaoEstoque(
+            ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MovimentacaoEstoque>(entity =>
+            {
+                entity.ToTable("MovimentacoesEstoque");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Tipo)
+                    .IsRequired();
+
+                entity.Property(x => x.Quantidade)
+                    .HasPrecision(18, 3)
+                    .IsRequired();
+
+                entity.Property(x => x.EstoqueAnterior)
+                    .HasPrecision(18, 3)
+                    .IsRequired();
+
+                entity.Property(x => x.EstoquePosterior)
+                    .HasPrecision(18, 3)
+                    .IsRequired();
+
+                entity.Property(x => x.Observacao)
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.DataMovimentacao)
+                    .IsRequired();
+
+                entity.HasOne(x => x.Produto)
+                    .WithMany()
+                    .HasForeignKey(x => x.ProdutoId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.ProdutoId);
+
+                entity.HasIndex(x => x.DataMovimentacao);
             });
         }
     }

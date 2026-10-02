@@ -39,11 +39,29 @@ namespace ConstruSys.Desktop
                         options.UseSqlServer(connectionString);
                     });
 
-                    services.AddScoped<IProdutoRepository, ProdutoRepository>();
+                    services.AddScoped<
+                        IProdutoRepository,
+                        ProdutoRepository>();
 
-                    services.AddScoped<ProdutoService>();
+                    services.AddScoped<
+                        ProdutoService>();
 
-                    services.AddTransient<MainWindow>();
+                    services.AddScoped<
+                        IClienteRepository,
+                        ClienteRepository>();
+
+                    services.AddScoped<
+                        ClienteService>();
+
+                    services.AddScoped<
+                        IEstoqueRepository,
+                        EstoqueRepository>();
+
+                    services.AddScoped<
+                        EstoqueService>();
+
+                    services.AddTransient<
+                        MainWindow>();
                 })
                 .Build();
         }

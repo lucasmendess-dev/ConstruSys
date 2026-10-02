@@ -1,0 +1,415 @@
+﻿<UserControl x:Class="ConstruSys.Desktop.Views.Configuracoes.LixeiraView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+
+        <Style x:Key="BotaoBase"
+               TargetType="Button">
+            <Setter Property="Height"
+                    Value="30"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="FontSize"
+                    Value="12"/>
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center"/>
+        </Style>
+
+        <Style x:Key="BotaoRestaurar"
+               TargetType="Button"
+               BasedOn="{StaticResource BotaoBase}">
+            <Setter Property="Background"
+                    Value="#ECFDF5"/>
+            <Setter Property="Foreground"
+                    Value="#047857"/>
+            <Setter Property="BorderBrush"
+                    Value="#A7F3D0"/>
+        </Style>
+
+        <Style x:Key="BotaoExcluir"
+               TargetType="Button"
+               BasedOn="{StaticResource BotaoBase}">
+            <Setter Property="Background"
+                    Value="#FEF2F2"/>
+            <Setter Property="Foreground"
+                    Value="#DC2626"/>
+            <Setter Property="BorderBrush"
+                    Value="#FECACA"/>
+        </Style>
+
+        <Style x:Key="BotaoMenu"
+               TargetType="ToggleButton">
+            <Setter Property="Width"
+                    Value="34"/>
+            <Setter Property="Height"
+                    Value="30"/>
+            <Setter Property="Background"
+                    Value="#F9FAFB"/>
+            <Setter Property="Foreground"
+                    Value="#374151"/>
+            <Setter Property="BorderBrush"
+                    Value="#D1D5DB"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="FontSize"
+                    Value="18"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+        </Style>
+
+        <Style x:Key="BotaoMenuItem"
+               TargetType="Button">
+            <Setter Property="Height"
+                    Value="34"/>
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left"/>
+            <Setter Property="Padding"
+                    Value="12,0"/>
+            <Setter Property="Background"
+                    Value="White"/>
+            <Setter Property="Foreground"
+                    Value="#374151"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="FontSize"
+                    Value="12"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Background"
+                            Value="#F3F4F6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Background="#F3F4F6">
+
+        <Grid Margin="30">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- CABEÇALHO -->
+
+            <StackPanel Grid.Row="0">
+
+                <TextBlock Text="Lixeira"
+                           FontSize="30"
+                           FontWeight="SemiBold"
+                           Foreground="#111827"/>
+
+                <TextBlock Text="Gerencie registros excluídos do sistema"
+                           Margin="0,5,0,0"
+                           Foreground="#6B7280"
+                           FontSize="14"/>
+
+            </StackPanel>
+
+            <!-- ABAS -->
+
+            <TabControl Grid.Row="2"
+                        Background="Transparent"
+                        BorderThickness="0">
+
+                <!-- CLIENTES -->
+
+                <TabItem Header="Clientes">
+
+                    <Grid Margin="0,18,0,0">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Clientes excluídos"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#111827"/>
+
+                            <TextBlock x:Name="TxtTotalClientesExcluidos"
+                                       Grid.Column="1"
+                                       Foreground="#6B7280"
+                                       VerticalAlignment="Center"/>
+
+                        </Grid>
+
+                        <Border Grid.Row="2"
+                                Background="White"
+                                CornerRadius="10"
+                                Padding="20">
+
+                            <DataGrid x:Name="GridClientesExcluidos"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="True"
+                                      BorderThickness="0"
+                                      GridLinesVisibility="Horizontal"
+                                      AlternatingRowBackground="#F9FAFB"
+                                      RowHeight="44">
+
+                                <DataGrid.Columns>
+
+                                    <DataGridTextColumn Header="Nome"
+                                                        Binding="{Binding NomeRazaoSocial}"
+                                                        Width="*"/>
+
+                                    <DataGridTextColumn Header="CPF/CNPJ"
+                                                        Binding="{Binding CpfCnpj}"
+                                                        Width="150"/>
+
+                                    <DataGridTextColumn Header="Cidade"
+                                                        Binding="{Binding Cidade}"
+                                                        Width="120"/>
+
+                                    <DataGridTextColumn Header="Excluído em"
+                                                        Binding="{Binding DataExclusao, StringFormat=dd/MM/yyyy HH:mm}"
+                                                        Width="150"/>
+
+                                    <DataGridTemplateColumn Header="Ações"
+                                                            Width="165">
+
+                                        <DataGridTemplateColumn.CellTemplate>
+
+                                            <DataTemplate>
+
+                                                <StackPanel Orientation="Horizontal"
+                                                            HorizontalAlignment="Center">
+
+                                                    <Button Content="Restaurar"
+                                                            Width="85"
+                                                            Margin="0,0,6,0"
+                                                            Style="{StaticResource BotaoRestaurar}"
+                                                            Tag="{Binding}"
+                                                            Click="RestaurarCliente_Click"/>
+
+                                                    <Grid>
+
+                                                        <ToggleButton x:Name="BtnMenuCliente"
+                                                                      Content="⋮"
+                                                                      Style="{StaticResource BotaoMenu}"/>
+
+                                                        <Popup IsOpen="{Binding IsChecked, ElementName=BtnMenuCliente}"
+                                                               PlacementTarget="{Binding ElementName=BtnMenuCliente}"
+                                                               Placement="Bottom"
+                                                               StaysOpen="False"
+                                                               AllowsTransparency="True">
+
+                                                            <Border Background="White"
+                                                                    BorderBrush="#D1D5DB"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="6"
+                                                                    Padding="4"
+                                                                    Width="150">
+
+                                                                <StackPanel>
+
+                                                                    <Button Content="Visualizar"
+                                                                            Style="{StaticResource BotaoMenuItem}"
+                                                                            Tag="{Binding}"
+                                                                            Click="VisualizarClienteExcluido_Click"/>
+
+                                                                    <Separator Margin="4"/>
+
+                                                                    <Button Content="Excluir definitivamente"
+                                                                            Style="{StaticResource BotaoMenuItem}"
+                                                                            Foreground="#DC2626"
+                                                                            Tag="{Binding}"
+                                                                            Click="ExcluirClienteDefinitivamente_Click"/>
+
+                                                                </StackPanel>
+
+                                                            </Border>
+
+                                                        </Popup>
+
+                                                    </Grid>
+
+                                                </StackPanel>
+
+                                            </DataTemplate>
+
+                                        </DataGridTemplateColumn.CellTemplate>
+
+                                    </DataGridTemplateColumn>
+
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+
+                        </Border>
+
+                    </Grid>
+
+                </TabItem>
+
+                <!-- PRODUTOS -->
+
+                <TabItem Header="Produtos">
+
+                    <Grid Margin="0,18,0,0">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="15"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Produtos excluídos"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#111827"/>
+
+                            <TextBlock x:Name="TxtTotalProdutosExcluidos"
+                                       Grid.Column="1"
+                                       Foreground="#6B7280"
+                                       VerticalAlignment="Center"/>
+
+                        </Grid>
+
+                        <Border Grid.Row="2"
+                                Background="White"
+                                CornerRadius="10"
+                                Padding="20">
+
+                            <DataGrid x:Name="GridProdutosExcluidos"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="True"
+                                      BorderThickness="0"
+                                      GridLinesVisibility="Horizontal"
+                                      AlternatingRowBackground="#F9FAFB"
+                                      RowHeight="44">
+
+                                <DataGrid.Columns>
+
+                                    <DataGridTextColumn Header="Código"
+                                                        Binding="{Binding Codigo}"
+                                                        Width="100"/>
+
+                                    <DataGridTextColumn Header="Produto"
+                                                        Binding="{Binding Nome}"
+                                                        Width="*"/>
+
+                                    <DataGridTextColumn Header="Categoria"
+                                                        Binding="{Binding Categoria}"
+                                                        Width="130"/>
+
+                                    <DataGridTextColumn Header="Excluído em"
+                                                        Binding="{Binding DataExclusao, StringFormat=dd/MM/yyyy HH:mm}"
+                                                        Width="150"/>
+
+                                    <DataGridTemplateColumn Header="Ações"
+                                                            Width="165">
+
+                                        <DataGridTemplateColumn.CellTemplate>
+
+                                            <DataTemplate>
+
+                                                <StackPanel Orientation="Horizontal"
+                                                            HorizontalAlignment="Center">
+
+                                                    <Button Content="Restaurar"
+                                                            Width="85"
+                                                            Margin="0,0,6,0"
+                                                            Style="{StaticResource BotaoRestaurar}"
+                                                            Tag="{Binding}"
+                                                            Click="RestaurarProduto_Click"/>
+
+                                                    <Grid>
+
+                                                        <ToggleButton x:Name="BtnMenuProduto"
+                                                                      Content="⋮"
+                                                                      Style="{StaticResource BotaoMenu}"/>
+
+                                                        <Popup IsOpen="{Binding IsChecked, ElementName=BtnMenuProduto}"
+                                                               PlacementTarget="{Binding ElementName=BtnMenuProduto}"
+                                                               Placement="Bottom"
+                                                               StaysOpen="False"
+                                                               AllowsTransparency="True">
+
+                                                            <Border Background="White"
+                                                                    BorderBrush="#D1D5DB"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="6"
+                                                                    Padding="4"
+                                                                    Width="150">
+
+                                                                <StackPanel>
+
+                                                                    <Button Content="Visualizar"
+                                                                            Style="{StaticResource BotaoMenuItem}"
+                                                                            Tag="{Binding}"
+                                                                            Click="VisualizarProdutoExcluido_Click"/>
+
+                                                                    <Separator Margin="4"/>
+
+                                                                    <Button Content="Excluir definitivamente"
+                                                                            Style="{StaticResource BotaoMenuItem}"
+                                                                            Foreground="#DC2626"
+                                                                            Tag="{Binding}"
+                                                                            Click="ExcluirProdutoDefinitivamente_Click"/>
+
+                                                                </StackPanel>
+
+                                                            </Border>
+
+                                                        </Popup>
+
+                                                    </Grid>
+
+                                                </StackPanel>
+
+                                            </DataTemplate>
+
+                                        </DataGridTemplateColumn.CellTemplate>
+
+                                    </DataGridTemplateColumn>
+
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+
+                        </Border>
+
+                    </Grid>
+
+                </TabItem>
+
+            </TabControl>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>
