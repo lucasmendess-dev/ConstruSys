@@ -13,16 +13,25 @@ namespace ConstruSys.Desktop
 {
     public partial class MainWindow : Window
     {
-        private readonly ProdutoService _produtoService;
-        private readonly ClienteService _clienteService;
-        private readonly EstoqueService _estoqueService;
+        private readonly ProdutoService
+            _produtoService;
+
+        private readonly ClienteService
+            _clienteService;
+
+        private readonly EstoqueService
+            _estoqueService;
+
+        private readonly CadastroProdutoAuxiliarService
+            _cadastroProdutoAuxiliarService;
 
         private Button? _botaoSelecionado;
 
         public MainWindow(
             ProdutoService produtoService,
             ClienteService clienteService,
-            EstoqueService estoqueService)
+            EstoqueService estoqueService,
+            CadastroProdutoAuxiliarService cadastroProdutoAuxiliarService)
         {
             InitializeComponent();
 
@@ -35,28 +44,24 @@ namespace ConstruSys.Desktop
             _estoqueService =
                 estoqueService;
 
-            MainContent.Content =
-                new DashboardView();
+            _cadastroProdutoAuxiliarService =
+                cadastroProdutoAuxiliarService;
 
-            MarcarBotaoSelecionado(
-                BtnDashboard);
+            AbrirDashboard();
         }
 
         private void MenuButton_Click(
-            object sender,
-            RoutedEventArgs e)
+                object sender,
+                RoutedEventArgs e)
         {
-            if (sender is not Button button)
+            if (sender is not Button botao)
                 return;
 
-            string pagina =
-                button.Tag?.ToString()
+            string modulo =
+                botao.Tag?.ToString()
                 ?? string.Empty;
 
-            bool paginaValida =
-                true;
-
-            switch (pagina)
+            switch (modulo)
             {
                 case "Dashboard":
 
@@ -65,19 +70,33 @@ namespace ConstruSys.Desktop
 
                     break;
 
+                case "PDV":
+
+                    MainContent.Content =
+                        new PdvView();
+
+                    break;
+
+                case "Vendas":
+
+                    ModuloNaoImplementado(
+                        "Vendas");
+
+                    return;
+
+                case "Orcamentos":
+
+                    ModuloNaoImplementado(
+                        "Orçamentos");
+
+                    return;
+
                 case "Produtos":
 
                     MainContent.Content =
                         new ProdutosView(
-                            _produtoService);
-
-                    break;
-
-                case "Clientes":
-
-                    MainContent.Content =
-                        new ClientesView(
-                            _clienteService);
+                            _produtoService,
+                            _cadastroProdutoAuxiliarService);
 
                     break;
 
@@ -90,12 +109,48 @@ namespace ConstruSys.Desktop
 
                     break;
 
-                case "PDV":
+                case "Compras":
+
+                    ModuloNaoImplementado(
+                        "Compras");
+
+                    return;
+
+                case "Clientes":
 
                     MainContent.Content =
-                        new PdvView();
+                        new ClientesView(
+                            _clienteService);
 
                     break;
+
+                case "Fornecedores":
+
+                    ModuloNaoImplementado(
+                        "Fornecedores");
+
+                    return;
+
+                case "Caixa":
+
+                    ModuloNaoImplementado(
+                        "Caixa");
+
+                    return;
+
+                case "Financeiro":
+
+                    ModuloNaoImplementado(
+                        "Financeiro");
+
+                    return;
+
+                case "Relatorios":
+
+                    ModuloNaoImplementado(
+                        "Relatórios");
+
+                    return;
 
                 case "Lixeira":
 
@@ -106,25 +161,45 @@ namespace ConstruSys.Desktop
 
                     break;
 
+                case "Configuracoes":
+
+                    ModuloNaoImplementado(
+                        "Configurações");
+
+                    return;
+
                 default:
 
-                    paginaValida =
-                        false;
-
                     MessageBox.Show(
-                        "Este módulo ainda será implementado.",
+                        "Módulo não identificado.",
                         "ConstruSys",
                         MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                        MessageBoxImage.Warning);
 
-                    break;
+                    return;
             }
 
-            if (paginaValida)
-            {
-                MarcarBotaoSelecionado(
-                    button);
-            }
+            MarcarBotaoSelecionado(
+                botao);
+        }
+
+        private void AbrirDashboard()
+        {
+            MainContent.Content =
+                new DashboardView();
+
+            MarcarBotaoSelecionado(
+                BtnDashboard);
+        }
+
+        private void ModuloNaoImplementado(
+            string modulo)
+        {
+            MessageBox.Show(
+                $"O módulo {modulo} ainda será implementado.",
+                "ConstruSys",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void MarcarBotaoSelecionado(
@@ -143,9 +218,6 @@ namespace ConstruSys.Desktop
                             225));
             }
 
-            _botaoSelecionado =
-                botao;
-
             botao.Background =
                 new SolidColorBrush(
                     Color.FromRgb(
@@ -155,6 +227,9 @@ namespace ConstruSys.Desktop
 
             botao.Foreground =
                 Brushes.White;
+
+            _botaoSelecionado =
+                botao;
         }
     }
 }

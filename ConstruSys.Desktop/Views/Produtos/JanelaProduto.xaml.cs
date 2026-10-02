@@ -10,56 +10,307 @@ namespace ConstruSys.Desktop.Views.Produtos
     {
         private readonly ProdutoService _produtoService;
 
+        private readonly CadastroProdutoAuxiliarService
+            _cadastroAuxiliarService;
+
         private readonly Produto? _produtoEdicao;
 
         public JanelaProduto(
             ProdutoService produtoService,
+            CadastroProdutoAuxiliarService cadastroAuxiliarService,
             Produto? produto = null)
         {
             InitializeComponent();
 
-            _produtoService = produtoService;
-            _produtoEdicao = produto;
+            _produtoService =
+                produtoService;
 
-            CmbUnidade.SelectedIndex = 0;
+            _cadastroAuxiliarService =
+                cadastroAuxiliarService;
 
-            if (_produtoEdicao != null)
-                CarregarProduto();
+            _produtoEdicao =
+                produto;
+
+            CmbUnidade.SelectedIndex =
+                0;
+
+            Loaded +=
+                JanelaProduto_Loaded;
+        }
+
+        private async void JanelaProduto_Loaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            try
+            {
+                await CarregarCadastrosAuxiliaresAsync();
+
+                if (_produtoEdicao != null)
+                {
+                    CarregarProduto();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao carregar o formulário.\n\n{ex.Message}",
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private async Task CarregarCadastrosAuxiliaresAsync()
+        {
+            List<CategoriaProduto> categorias =
+                await _cadastroAuxiliarService
+                    .ObterCategoriasAsync();
+
+            List<MarcaProduto> marcas =
+                await _cadastroAuxiliarService
+                    .ObterMarcasAsync();
+
+            List<LocalizacaoEstoqueCadastro> localizacoes =
+                await _cadastroAuxiliarService
+                    .ObterLocalizacoesAsync();
+
+            CmbCategoria.ItemsSource =
+                categorias;
+
+            CmbMarca.ItemsSource =
+                marcas;
+
+            CmbLocalizacao.ItemsSource =
+                localizacoes;
         }
 
         private void CarregarProduto()
         {
-            TxtTitulo.Text = "Editar Produto";
+            if (_produtoEdicao == null)
+                return;
 
-            TxtCodigo.Text = _produtoEdicao!.Codigo;
-            TxtCodigoBarras.Text = _produtoEdicao.CodigoBarras;
-            TxtNome.Text = _produtoEdicao.Nome;
-            TxtCategoria.Text = _produtoEdicao.Categoria;
-            TxtMarca.Text = _produtoEdicao.Marca;
-            TxtLocalizacao.Text = _produtoEdicao.LocalizacaoEstoque;
+            TxtTitulo.Text =
+                "Editar Produto";
+
+            TxtCodigo.Text =
+                _produtoEdicao.Codigo;
+
+            TxtCodigoBarras.Text =
+                _produtoEdicao.CodigoBarras;
+
+            TxtNome.Text =
+                _produtoEdicao.Nome;
+
+            TxtSubcategoria.Text =
+                _produtoEdicao.Subcategoria;
+
+            TxtPeso.Text =
+                _produtoEdicao.Peso?
+                    .ToString("0.###");
 
             TxtPrecoCusto.Text =
-                _produtoEdicao.PrecoCusto.ToString("N2");
+                _produtoEdicao.PrecoCusto
+                    .ToString("0.00");
 
             TxtPrecoVenda.Text =
-                _produtoEdicao.PrecoVenda.ToString("N2");
+                _produtoEdicao.PrecoVenda
+                    .ToString("0.00");
 
             TxtEstoqueAtual.Text =
-                _produtoEdicao.EstoqueAtual.ToString("N3");
+                _produtoEdicao.EstoqueAtual
+                    .ToString("0.###");
 
             TxtEstoqueMinimo.Text =
-                _produtoEdicao.EstoqueMinimo.ToString("N3");
+                _produtoEdicao.EstoqueMinimo
+                    .ToString("0.###");
 
-            ChkAtivo.IsChecked = _produtoEdicao.Ativo;
+            TxtEstoqueMaximo.Text =
+                _produtoEdicao.EstoqueMaximo?
+                    .ToString("0.###");
 
-            foreach (ComboBoxItem item in CmbUnidade.Items)
+            ChkAtivo.IsChecked =
+                _produtoEdicao.Ativo;
+
+            SelecionarCategoria(
+                _produtoEdicao.Categoria);
+
+            SelecionarMarca(
+                _produtoEdicao.Marca);
+
+            SelecionarLocalizacao(
+                _produtoEdicao.LocalizacaoEstoque);
+
+            foreach (ComboBoxItem item
+                     in CmbUnidade.Items)
             {
                 if (item.Content?.ToString() ==
                     _produtoEdicao.UnidadeMedida)
                 {
-                    CmbUnidade.SelectedItem = item;
+                    CmbUnidade.SelectedItem =
+                        item;
+
                     break;
                 }
+            }
+        }
+
+        private void SelecionarCategoria(
+            string? nome)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+                return;
+
+            CategoriaProduto? categoria =
+                CmbCategoria.Items
+                    .Cast<CategoriaProduto>()
+                    .FirstOrDefault(
+                        x => x.Nome == nome);
+
+            CmbCategoria.SelectedItem =
+                categoria;
+        }
+
+        private void SelecionarMarca(
+            string? nome)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+                return;
+
+            MarcaProduto? marca =
+                CmbMarca.Items
+                    .Cast<MarcaProduto>()
+                    .FirstOrDefault(
+                        x => x.Nome == nome);
+
+            CmbMarca.SelectedItem =
+                marca;
+        }
+
+        private void SelecionarLocalizacao(
+            string? nome)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+                return;
+
+            LocalizacaoEstoqueCadastro? localizacao =
+                CmbLocalizacao.Items
+                    .Cast<LocalizacaoEstoqueCadastro>()
+                    .FirstOrDefault(
+                        x => x.Nome == nome);
+
+            CmbLocalizacao.SelectedItem =
+                localizacao;
+        }
+
+        private async void NovaCategoria_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            JanelaCadastroAuxiliar janela =
+                new(
+                    "Nova Categoria",
+                    "Informe o nome da nova categoria.");
+
+            janela.Owner =
+                this;
+
+            if (janela.ShowDialog() != true)
+                return;
+
+            try
+            {
+                CategoriaProduto categoria =
+                    await _cadastroAuxiliarService
+                        .AdicionarCategoriaAsync(
+                            janela.ValorDigitado);
+
+                await CarregarCadastrosAuxiliaresAsync();
+
+                SelecionarCategoria(
+                    categoria.Nome);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+        }
+
+        private async void NovaMarca_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            JanelaCadastroAuxiliar janela =
+                new(
+                    "Nova Marca",
+                    "Informe o nome da nova marca.");
+
+            janela.Owner =
+                this;
+
+            if (janela.ShowDialog() != true)
+                return;
+
+            try
+            {
+                MarcaProduto marca =
+                    await _cadastroAuxiliarService
+                        .AdicionarMarcaAsync(
+                            janela.ValorDigitado);
+
+                await CarregarCadastrosAuxiliaresAsync();
+
+                SelecionarMarca(
+                    marca.Nome);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+        }
+
+        private async void NovaLocalizacao_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            JanelaCadastroAuxiliar janela =
+                new(
+                    "Nova Localização",
+                    "Informe a nova localização de estoque.");
+
+            janela.Owner =
+                this;
+
+            if (janela.ShowDialog() != true)
+                return;
+
+            try
+            {
+                LocalizacaoEstoqueCadastro localizacao =
+                    await _cadastroAuxiliarService
+                        .AdicionarLocalizacaoAsync(
+                            janela.ValorDigitado);
+
+                await CarregarCadastrosAuxiliaresAsync();
+
+                SelecionarLocalizacao(
+                    localizacao.Nome);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
 
@@ -75,10 +326,7 @@ namespace ConstruSys.Desktop.Views.Produtos
                     CultureInfo.CurrentCulture,
                     out decimal precoCusto))
                 {
-                    MessageBox.Show(
-                        "Informe um preço de custo válido.");
-
-                    return;
+                    precoCusto = 0;
                 }
 
                 if (!decimal.TryParse(
@@ -87,10 +335,7 @@ namespace ConstruSys.Desktop.Views.Produtos
                     CultureInfo.CurrentCulture,
                     out decimal precoVenda))
                 {
-                    MessageBox.Show(
-                        "Informe um preço de venda válido.");
-
-                    return;
+                    precoVenda = 0;
                 }
 
                 if (!decimal.TryParse(
@@ -99,10 +344,7 @@ namespace ConstruSys.Desktop.Views.Produtos
                     CultureInfo.CurrentCulture,
                     out decimal estoqueAtual))
                 {
-                    MessageBox.Show(
-                        "Informe um estoque atual válido.");
-
-                    return;
+                    estoqueAtual = 0;
                 }
 
                 if (!decimal.TryParse(
@@ -111,94 +353,159 @@ namespace ConstruSys.Desktop.Views.Produtos
                     CultureInfo.CurrentCulture,
                     out decimal estoqueMinimo))
                 {
-                    MessageBox.Show(
-                        "Informe um estoque mínimo válido.");
+                    estoqueMinimo = 0;
+                }
 
-                    return;
+                decimal? estoqueMaximo = null;
+
+                if (!string.IsNullOrWhiteSpace(
+                    TxtEstoqueMaximo.Text))
+                {
+                    if (!decimal.TryParse(
+                        TxtEstoqueMaximo.Text,
+                        NumberStyles.Number,
+                        CultureInfo.CurrentCulture,
+                        out decimal valorMaximo))
+                    {
+                        MessageBox.Show(
+                            "Informe um estoque máximo válido.");
+
+                        return;
+                    }
+
+                    estoqueMaximo =
+                        valorMaximo;
+                }
+
+                decimal? peso = null;
+
+                if (!string.IsNullOrWhiteSpace(
+                    TxtPeso.Text))
+                {
+                    if (!decimal.TryParse(
+                        TxtPeso.Text,
+                        NumberStyles.Number,
+                        CultureInfo.CurrentCulture,
+                        out decimal valorPeso))
+                    {
+                        MessageBox.Show(
+                            "Informe um peso válido.");
+
+                        return;
+                    }
+
+                    peso =
+                        valorPeso;
                 }
 
                 string unidade =
-                    (CmbUnidade.SelectedItem as ComboBoxItem)?
+                    (CmbUnidade.SelectedItem
+                        as ComboBoxItem)?
                     .Content?
-                    .ToString() ?? "UN";
+                    .ToString()
+                    ?? "UN";
+
+                string? categoria =
+                    (CmbCategoria.SelectedItem
+                        as CategoriaProduto)?
+                    .Nome;
+
+                string? marca =
+                    (CmbMarca.SelectedItem
+                        as MarcaProduto)?
+                    .Nome;
+
+                string? localizacao =
+                    (CmbLocalizacao.SelectedItem
+                        as LocalizacaoEstoqueCadastro)?
+                    .Nome;
 
                 if (_produtoEdicao == null)
                 {
-                    Produto produto = new()
-                    {
-                        Codigo = TxtCodigo.Text.Trim(),
+                    Produto produto =
+                        new()
+                        {
+                            Codigo =
+                                TxtCodigo.Text,
 
-                        CodigoBarras =
-                            string.IsNullOrWhiteSpace(
-                                TxtCodigoBarras.Text)
-                                ? null
-                                : TxtCodigoBarras.Text.Trim(),
+                            CodigoBarras =
+                                TextoOuNull(
+                                    TxtCodigoBarras.Text),
 
-                        Nome = TxtNome.Text.Trim(),
+                            Nome =
+                                TxtNome.Text,
 
-                        Categoria =
-                            string.IsNullOrWhiteSpace(
-                                TxtCategoria.Text)
-                                ? null
-                                : TxtCategoria.Text.Trim(),
+                            Categoria =
+                                categoria,
 
-                        Marca =
-                            string.IsNullOrWhiteSpace(
-                                TxtMarca.Text)
-                                ? null
-                                : TxtMarca.Text.Trim(),
+                            Subcategoria =
+                                TextoOuNull(
+                                    TxtSubcategoria.Text),
 
-                        UnidadeMedida = unidade,
+                            Marca =
+                                marca,
 
-                        LocalizacaoEstoque =
-                            string.IsNullOrWhiteSpace(
-                                TxtLocalizacao.Text)
-                                ? null
-                                : TxtLocalizacao.Text.Trim(),
+                            UnidadeMedida =
+                                unidade,
 
-                        PrecoCusto = precoCusto,
-                        PrecoVenda = precoVenda,
-                        EstoqueAtual = estoqueAtual,
-                        EstoqueMinimo = estoqueMinimo,
-                        Ativo = ChkAtivo.IsChecked == true
-                    };
+                            LocalizacaoEstoque =
+                                localizacao,
 
-                    await _produtoService.AdicionarAsync(produto);
+                            Peso =
+                                peso,
+
+                            PrecoCusto =
+                                precoCusto,
+
+                            PrecoVenda =
+                                precoVenda,
+
+                            EstoqueAtual =
+                                estoqueAtual,
+
+                            EstoqueMinimo =
+                                estoqueMinimo,
+
+                            EstoqueMaximo =
+                                estoqueMaximo,
+
+                            Ativo =
+                                ChkAtivo.IsChecked == true
+                        };
+
+                    await _produtoService
+                        .AdicionarAsync(produto);
                 }
                 else
                 {
                     _produtoEdicao.Codigo =
-                        TxtCodigo.Text.Trim();
+                        TxtCodigo.Text;
 
                     _produtoEdicao.CodigoBarras =
-                        string.IsNullOrWhiteSpace(
-                            TxtCodigoBarras.Text)
-                            ? null
-                            : TxtCodigoBarras.Text.Trim();
+                        TextoOuNull(
+                            TxtCodigoBarras.Text);
 
                     _produtoEdicao.Nome =
-                        TxtNome.Text.Trim();
+                        TxtNome.Text;
 
                     _produtoEdicao.Categoria =
-                        string.IsNullOrWhiteSpace(
-                            TxtCategoria.Text)
-                            ? null
-                            : TxtCategoria.Text.Trim();
+                        categoria;
+
+                    _produtoEdicao.Subcategoria =
+                        TextoOuNull(
+                            TxtSubcategoria.Text);
 
                     _produtoEdicao.Marca =
-                        string.IsNullOrWhiteSpace(
-                            TxtMarca.Text)
-                            ? null
-                            : TxtMarca.Text.Trim();
+                        marca;
 
                     _produtoEdicao.UnidadeMedida =
                         unidade;
 
                     _produtoEdicao.LocalizacaoEstoque =
-                        string.IsNullOrWhiteSpace(
-                            TxtLocalizacao.Text)
-                            ? null
-                            : TxtLocalizacao.Text.Trim();
+                        localizacao;
+
+                    _produtoEdicao.Peso =
+                        peso;
 
                     _produtoEdicao.PrecoCusto =
                         precoCusto;
@@ -212,14 +519,19 @@ namespace ConstruSys.Desktop.Views.Produtos
                     _produtoEdicao.EstoqueMinimo =
                         estoqueMinimo;
 
+                    _produtoEdicao.EstoqueMaximo =
+                        estoqueMaximo;
+
                     _produtoEdicao.Ativo =
                         ChkAtivo.IsChecked == true;
 
                     await _produtoService
-                        .AtualizarAsync(_produtoEdicao);
+                        .AtualizarAsync(
+                            _produtoEdicao);
                 }
 
-                DialogResult = true;
+                DialogResult =
+                    true;
 
                 Close();
             }
@@ -233,11 +545,20 @@ namespace ConstruSys.Desktop.Views.Produtos
             }
         }
 
+        private static string? TextoOuNull(
+            string texto)
+        {
+            return string.IsNullOrWhiteSpace(texto)
+                ? null
+                : texto.Trim();
+        }
+
         private void Cancelar_Click(
             object sender,
             RoutedEventArgs e)
         {
-            DialogResult = false;
+            DialogResult =
+                false;
 
             Close();
         }

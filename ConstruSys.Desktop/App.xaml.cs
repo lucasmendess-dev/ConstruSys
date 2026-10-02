@@ -62,6 +62,13 @@ namespace ConstruSys.Desktop
 
                     services.AddTransient<
                         MainWindow>();
+
+                    services.AddScoped<
+                        ICadastroProdutoAuxiliarRepository,
+                        CadastroProdutoAuxiliarRepository>();
+
+                    services.AddScoped<
+                        CadastroProdutoAuxiliarService>();
                 })
                 .Build();
         }

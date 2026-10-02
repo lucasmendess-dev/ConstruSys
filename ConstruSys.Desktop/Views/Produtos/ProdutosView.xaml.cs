@@ -10,17 +10,29 @@ namespace ConstruSys.Desktop.Views.Produtos
     {
         private readonly ProdutoService _produtoService;
 
+        private readonly CadastroProdutoAuxiliarService
+            _cadastroAuxiliarService;
+
         private List<Produto> _produtos = new();
 
         public ProdutosView(
-            ProdutoService produtoService)
+            ProdutoService produtoService,
+            CadastroProdutoAuxiliarService cadastroAuxiliarService)
         {
             InitializeComponent();
 
-            _produtoService = produtoService;
+            _produtoService =
+                produtoService;
+
+            _cadastroAuxiliarService =
+                cadastroAuxiliarService;
 
             Loaded += ProdutosView_Loaded;
         }
+
+        // =========================================================
+        // CARREGAMENTO
+        // =========================================================
 
         private async void ProdutosView_Loaded(
             object sender,
@@ -44,73 +56,131 @@ namespace ConstruSys.Desktop.Views.Produtos
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Erro ao carregar produtos.\n\n{ex.Message}",
+                    $"Não foi possível carregar os produtos.\n\n{ex.Message}",
                     "ConstruSys",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
         }
 
+        // =========================================================
+        // INDICADORES
+        // =========================================================
+
         private void AtualizarIndicadores()
         {
-            TxtCardTotal.Text =
-                _produtos.Count.ToString();
+            int total =
+                _produtos.Count;
 
-            TxtCardAtivos.Text =
+            int ativos =
                 _produtos.Count(
-                    p => p.Ativo)
-                .ToString();
+                    p => p.Ativo);
 
-            TxtCardEstoqueBaixo.Text =
+            int estoqueBaixo =
                 _produtos.Count(
                     p =>
+                        p.Ativo &&
                         p.EstoqueAtual > 0 &&
-                        p.EstoqueAtual <= p.EstoqueMinimo)
-                .ToString();
+                        p.EstoqueAtual <= p.EstoqueMinimo);
 
-            TxtCardSemEstoque.Text =
+            int semEstoque =
                 _produtos.Count(
-                    p => p.EstoqueAtual <= 0)
-                .ToString();
+                    p =>
+                        p.Ativo &&
+                        p.EstoqueAtual <= 0);
+
+            TxtTotalProdutos.Text =
+                total.ToString();
+
+            TxtProdutosAtivos.Text =
+                ativos.ToString();
+
+            TxtEstoqueBaixo.Text =
+                estoqueBaixo.ToString();
+
+            TxtSemEstoque.Text =
+                semEstoque.ToString();
         }
+
+        // =========================================================
+        // FILTROS
+        // =========================================================
 
         private void AplicarFiltros()
         {
-            IEnumerable<Produto> resultado =
+            IEnumerable<Produto> consulta =
                 _produtos;
 
             string termo =
-                TxtPesquisa.Text
+                TxtPesquisa.Text?
                     .Trim()
-                    .ToLower();
+                ?? string.Empty;
 
-            if (!string.IsNullOrWhiteSpace(termo))
+            if (!string.IsNullOrWhiteSpace(
+                termo))
             {
-                resultado =
-                    resultado.Where(p =>
-                        p.Nome
-                            .ToLower()
-                            .Contains(termo) ||
+                consulta =
+                    consulta.Where(
+                        produto =>
+                            produto.Codigo.Contains(
+                                termo,
+                                StringComparison.OrdinalIgnoreCase)
 
-                        p.Codigo
-                            .ToLower()
-                            .Contains(termo) ||
+                            ||
 
-                        (p.CodigoBarras ?? "")
-                            .ToLower()
-                            .Contains(termo) ||
+                            produto.Nome.Contains(
+                                termo,
+                                StringComparison.OrdinalIgnoreCase)
 
-                        (p.Categoria ?? "")
-                            .ToLower()
-                            .Contains(termo) ||
+                            ||
 
-                        (p.Marca ?? "")
-                            .ToLower()
-                            .Contains(termo));
+                            (!string.IsNullOrWhiteSpace(
+                                    produto.CodigoBarras)
+                                &&
+                                produto.CodigoBarras.Contains(
+                                    termo,
+                                    StringComparison.OrdinalIgnoreCase))
+
+                            ||
+
+                            (!string.IsNullOrWhiteSpace(
+                                    produto.Categoria)
+                                &&
+                                produto.Categoria.Contains(
+                                    termo,
+                                    StringComparison.OrdinalIgnoreCase))
+
+                            ||
+
+                            (!string.IsNullOrWhiteSpace(
+                                    produto.Subcategoria)
+                                &&
+                                produto.Subcategoria.Contains(
+                                    termo,
+                                    StringComparison.OrdinalIgnoreCase))
+
+                            ||
+
+                            (!string.IsNullOrWhiteSpace(
+                                    produto.Marca)
+                                &&
+                                produto.Marca.Contains(
+                                    termo,
+                                    StringComparison.OrdinalIgnoreCase))
+
+                            ||
+
+                            (!string.IsNullOrWhiteSpace(
+                                    produto.LocalizacaoEstoque)
+                                &&
+                                produto.LocalizacaoEstoque.Contains(
+                                    termo,
+                                    StringComparison.OrdinalIgnoreCase)));
             }
 
             string filtro =
-                (CmbFiltro.SelectedItem as ComboBoxItem)?
+                (CmbFiltro.SelectedItem
+                    as ComboBoxItem)?
                 .Content?
                 .ToString()
                 ?? "Todos";
@@ -119,24 +189,24 @@ namespace ConstruSys.Desktop.Views.Produtos
             {
                 case "Ativos":
 
-                    resultado =
-                        resultado.Where(
+                    consulta =
+                        consulta.Where(
                             p => p.Ativo);
 
                     break;
 
                 case "Inativos":
 
-                    resultado =
-                        resultado.Where(
+                    consulta =
+                        consulta.Where(
                             p => !p.Ativo);
 
                     break;
 
                 case "Estoque baixo":
 
-                    resultado =
-                        resultado.Where(
+                    consulta =
+                        consulta.Where(
                             p =>
                                 p.EstoqueAtual > 0 &&
                                 p.EstoqueAtual <=
@@ -146,221 +216,19 @@ namespace ConstruSys.Desktop.Views.Produtos
 
                 case "Sem estoque":
 
-                    resultado =
-                        resultado.Where(
-                            p => p.EstoqueAtual <= 0);
+                    consulta =
+                        consulta.Where(
+                            p =>
+                                p.EstoqueAtual <= 0);
 
                     break;
             }
 
-            List<Produto> lista =
-                resultado
-                    .OrderBy(p => p.Nome)
+            DgProdutos.ItemsSource =
+                consulta
+                    .OrderBy(
+                        p => p.Nome)
                     .ToList();
-
-            GridProdutos.ItemsSource =
-                lista;
-
-            TxtTotalProdutos.Text =
-                $"{lista.Count} produto(s)";
-        }
-
-        private void NovoProduto_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            JanelaProduto janela =
-                new(_produtoService);
-
-            janela.Owner =
-                Window.GetWindow(this);
-
-            bool? resultado =
-                janela.ShowDialog();
-
-            if (resultado == true)
-            {
-                _ = CarregarProdutosAsync();
-            }
-        }
-
-        private async void VisualizarProduto_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            if (sender is not Button button ||
-                button.Tag is not Produto produto)
-            {
-                return;
-            }
-
-            try
-            {
-                Produto? produtoBanco =
-                    await _produtoService
-                        .ObterPorIdAsync(produto.Id);
-
-                if (produtoBanco == null)
-                {
-                    MessageBox.Show(
-                        "Produto não encontrado.",
-                        "ConstruSys",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
-                    return;
-                }
-
-                VisualizarProduto janela =
-                    new(produtoBanco);
-
-                janela.Owner =
-                    Window.GetWindow(this);
-
-                janela.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Não foi possível visualizar o produto.\n\n{ex.Message}",
-                    "ConstruSys",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
-        }
-
-        private async void EditarProduto_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            if (sender is not Button button ||
-                button.Tag is not Produto produto)
-            {
-                return;
-            }
-
-            Produto? produtoBanco =
-                await _produtoService
-                    .ObterPorIdAsync(produto.Id);
-
-            if (produtoBanco == null)
-            {
-                MessageBox.Show(
-                    "Produto não encontrado.",
-                    "ConstruSys",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
-                return;
-            }
-
-            JanelaProduto janela =
-                new(
-                    _produtoService,
-                    produtoBanco);
-
-            janela.Owner =
-                Window.GetWindow(this);
-
-            bool? resultado =
-                janela.ShowDialog();
-
-            if (resultado == true)
-            {
-                await CarregarProdutosAsync();
-            }
-        }
-
-        private async void AlterarStatusProduto_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            if (sender is not Button button ||
-                button.Tag is not Produto produto)
-            {
-                return;
-            }
-
-            bool novoStatus =
-                !produto.Ativo;
-
-            string acao =
-                novoStatus
-                    ? "ativar"
-                    : "inativar";
-
-            MessageBoxResult confirmacao =
-                MessageBox.Show(
-                    $"Deseja realmente {acao} o produto:\n\n{produto.Nome}?",
-                    "ConstruSys",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-
-            if (confirmacao != MessageBoxResult.Yes)
-                return;
-
-            try
-            {
-                await _produtoService
-                    .AlterarStatusAsync(
-                        produto.Id,
-                        novoStatus);
-
-                await CarregarProdutosAsync();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    ex.Message,
-                    "ConstruSys",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
-        }
-
-        private async void ExcluirProduto_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            if (sender is not Button button ||
-                button.Tag is not Produto produto)
-            {
-                return;
-            }
-
-            MessageBoxResult resultado =
-                MessageBox.Show(
-                    $"Deseja mover o produto para a lixeira?\n\n" +
-                    $"{produto.Nome}\n\n" +
-                    "O histórico será preservado e o produto poderá ser restaurado posteriormente.",
-                    "Mover Produto para Lixeira",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);   
-
-            if (resultado != MessageBoxResult.Yes)
-                return;
-
-            try
-            {
-                await _produtoService
-                    .ExcluirAsync(produto.Id);
-
-                await CarregarProdutosAsync();
-
-                MessageBox.Show(
-                    "Produto movido para a lixeira com sucesso.",
-                    "ConstruSys",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Não foi possível excluir o produto.\n\n{ex.Message}",
-                    "ConstruSys",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
         }
 
         private void Pesquisar_Click(
@@ -385,6 +253,283 @@ namespace ConstruSys.Desktop.Views.Produtos
                 return;
 
             AplicarFiltros();
+        }
+
+        // =========================================================
+        // NOVO PRODUTO
+        // =========================================================
+
+        private async void NovoProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            JanelaProduto janela =
+                new(
+                    _produtoService,
+                    _cadastroAuxiliarService);
+
+            Window? owner =
+                Window.GetWindow(this);
+
+            if (owner != null)
+            {
+                janela.Owner =
+                    owner;
+            }
+
+            bool? resultado =
+                janela.ShowDialog();
+
+            if (resultado == true)
+            {
+                await CarregarProdutosAsync();
+            }
+        }
+
+        // =========================================================
+        // VISUALIZAR
+        // =========================================================
+
+        private async void VisualizarProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Produto? produto =
+                ObterProdutoDoBotao(
+                    sender);
+
+            if (produto == null)
+                return;
+
+            try
+            {
+                Produto? produtoBanco =
+                    await _produtoService
+                        .ObterPorIdAsync(
+                            produto.Id);
+
+                if (produtoBanco == null)
+                {
+                    MessageBox.Show(
+                        "O produto não foi encontrado.",
+                        "ConstruSys",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    await CarregarProdutosAsync();
+
+                    return;
+                }
+
+                VisualizarProduto janela =
+                    new(
+                        produtoBanco);
+
+                Window? owner =
+                    Window.GetWindow(this);
+
+                if (owner != null)
+                {
+                    janela.Owner =
+                        owner;
+                }
+
+                janela.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        // =========================================================
+        // EDITAR
+        // =========================================================
+
+        private async void EditarProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Produto? produto =
+                ObterProdutoDoBotao(
+                    sender);
+
+            if (produto == null)
+                return;
+
+            try
+            {
+                Produto? produtoBanco =
+                    await _produtoService
+                        .ObterPorIdAsync(
+                            produto.Id);
+
+                if (produtoBanco == null)
+                {
+                    MessageBox.Show(
+                        "O produto não foi encontrado.",
+                        "ConstruSys",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    await CarregarProdutosAsync();
+
+                    return;
+                }
+
+                JanelaProduto janela =
+                    new(
+                        _produtoService,
+                        _cadastroAuxiliarService,
+                        produtoBanco);
+
+                Window? owner =
+                    Window.GetWindow(this);
+
+                if (owner != null)
+                {
+                    janela.Owner =
+                        owner;
+                }
+
+                bool? resultado =
+                    janela.ShowDialog();
+
+                if (resultado == true)
+                {
+                    await CarregarProdutosAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        // =========================================================
+        // ATIVAR / INATIVAR
+        // =========================================================
+
+        private async void AlterarStatusProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Produto? produto =
+                ObterProdutoDoBotao(
+                    sender);
+
+            if (produto == null)
+                return;
+
+            bool novoStatus =
+                !produto.Ativo;
+
+            string acao =
+                novoStatus
+                    ? "ativar"
+                    : "inativar";
+
+            MessageBoxResult confirmacao =
+                MessageBox.Show(
+                    $"Deseja realmente {acao} o produto \"{produto.Nome}\"?",
+                    "ConstruSys",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+            if (confirmacao !=
+                MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                await _produtoService
+                    .AlterarStatusAsync(
+                        produto.Id,
+                        novoStatus);
+
+                await CarregarProdutosAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        // =========================================================
+        // EXCLUIR / LIXEIRA
+        // =========================================================
+
+        private async void ExcluirProduto_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Produto? produto =
+                ObterProdutoDoBotao(
+                    sender);
+
+            if (produto == null)
+                return;
+
+            MessageBoxResult confirmacao =
+                MessageBox.Show(
+                    $"Deseja mover o produto \"{produto.Nome}\" para a lixeira?\n\n" +
+                    "O produto poderá ser restaurado posteriormente.",
+                    "Mover para a lixeira",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+            if (confirmacao !=
+                MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                await _produtoService
+                    .ExcluirAsync(
+                        produto.Id);
+
+                await CarregarProdutosAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        // =========================================================
+        // AUXILIAR
+        // =========================================================
+
+        private static Produto? ObterProdutoDoBotao(
+            object sender)
+        {
+            if (sender is Button button &&
+                button.Tag is Produto produto)
+            {
+                return produto;
+            }
+
+            return null;
         }
     }
 }

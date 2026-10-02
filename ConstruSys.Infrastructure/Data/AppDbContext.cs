@@ -21,6 +21,12 @@ namespace ConstruSys.Infrastructure.Data
 
         public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
 
+        public DbSet<CategoriaProduto> CategoriasProduto { get; set; }
+
+        public DbSet<MarcaProduto> MarcasProduto { get; set; }
+
+        public DbSet<LocalizacaoEstoqueCadastro> LocalizacoesEstoque { get; set; }
+
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
         {
@@ -31,8 +37,210 @@ namespace ConstruSys.Infrastructure.Data
             ConfigurarFornecedor(modelBuilder);
             ConfigurarUsuario(modelBuilder);
             ConfigurarMovimentacaoEstoque(modelBuilder);
+            ConfigurarCadastrosAuxiliaresProduto(modelBuilder);
         }
 
+        private static void ConfigurarCadastrosAuxiliaresProduto(
+    ModelBuilder modelBuilder)
+        {
+            DateTime dataSeed =
+                new DateTime(
+                    2026,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    DateTimeKind.Unspecified);
+
+            // =========================================================
+            // CATEGORIAS
+            // =========================================================
+
+            modelBuilder.Entity<CategoriaProduto>(
+                entity =>
+                {
+                    entity.ToTable(
+                        "CategoriasProduto");
+
+                    entity.HasKey(
+                        x => x.Id);
+
+                    entity.Property(
+                            x => x.Nome)
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                    entity.Property(
+                            x => x.Ativo)
+                        .HasDefaultValue(true);
+
+                    entity.Property(
+                            x => x.DataCadastro)
+                        .IsRequired();
+
+                    entity.HasIndex(
+                            x => x.Nome)
+                        .IsUnique();
+
+                    entity.HasData(
+                        new CategoriaProduto
+                        {
+                            Id = 1,
+                            Nome = "CIMENTO",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 2,
+                            Nome = "ARGAMASSA",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 3,
+                            Nome = "TIJOLOS E BLOCOS",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 4,
+                            Nome = "AREIA E BRITA",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 5,
+                            Nome = "TINTAS",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 6,
+                            Nome = "HIDRÁULICA",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 7,
+                            Nome = "ELÉTRICA",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 8,
+                            Nome = "FERRAMENTAS",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 9,
+                            Nome = "PISOS E REVESTIMENTOS",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new CategoriaProduto
+                        {
+                            Id = 10,
+                            Nome = "TELHAS",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        });
+                });
+
+            // =========================================================
+            // MARCAS
+            // =========================================================
+
+            modelBuilder.Entity<MarcaProduto>(
+                entity =>
+                {
+                    entity.ToTable(
+                        "MarcasProduto");
+
+                    entity.HasKey(
+                        x => x.Id);
+
+                    entity.Property(
+                            x => x.Nome)
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                    entity.Property(
+                            x => x.Ativo)
+                        .HasDefaultValue(true);
+
+                    entity.Property(
+                            x => x.DataCadastro)
+                        .IsRequired();
+
+                    entity.HasIndex(
+                            x => x.Nome)
+                        .IsUnique();
+                });
+
+            // =========================================================
+            // LOCALIZAÇÕES
+            // =========================================================
+
+            modelBuilder.Entity<LocalizacaoEstoqueCadastro>(
+                entity =>
+                {
+                    entity.ToTable(
+                        "LocalizacoesEstoque");
+
+                    entity.HasKey(
+                        x => x.Id);
+
+                    entity.Property(
+                            x => x.Nome)
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                    entity.Property(
+                            x => x.Ativo)
+                        .HasDefaultValue(true);
+
+                    entity.Property(
+                            x => x.DataCadastro)
+                        .IsRequired();
+
+                    entity.HasIndex(
+                            x => x.Nome)
+                        .IsUnique();
+
+                    entity.HasData(
+                        new LocalizacaoEstoqueCadastro
+                        {
+                            Id = 1,
+                            Nome = "LOJA",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new LocalizacaoEstoqueCadastro
+                        {
+                            Id = 2,
+                            Nome = "DEPÓSITO",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        },
+                        new LocalizacaoEstoqueCadastro
+                        {
+                            Id = 3,
+                            Nome = "PÁTIO",
+                            Ativo = true,
+                            DataCadastro = dataSeed
+                        });
+                });
+        }
         private static void ConfigurarProduto(
             ModelBuilder modelBuilder)
         {
