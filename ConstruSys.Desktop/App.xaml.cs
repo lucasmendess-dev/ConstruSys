@@ -1,4 +1,7 @@
-﻿using ConstruSys.Infrastructure.Data;
+﻿using ConstruSys.Application.Services;
+using ConstruSys.Domain.Interfaces;
+using ConstruSys.Infrastructure.Data;
+using ConstruSys.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +10,7 @@ using System.Windows;
 
 namespace ConstruSys.Desktop
 {
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
         private readonly IHost _host;
 
@@ -26,7 +29,8 @@ namespace ConstruSys.Desktop
                 .ConfigureServices((context, services) =>
                 {
                     string connectionString =
-                        context.Configuration.GetConnectionString("DefaultConnection")
+                        context.Configuration
+                            .GetConnectionString("DefaultConnection")
                         ?? throw new InvalidOperationException(
                             "A ConnectionString 'DefaultConnection' não foi encontrada.");
 
@@ -34,6 +38,10 @@ namespace ConstruSys.Desktop
                     {
                         options.UseSqlServer(connectionString);
                     });
+
+                    services.AddScoped<IProdutoRepository, ProdutoRepository>();
+
+                    services.AddScoped<ProdutoService>();
 
                     services.AddTransient<MainWindow>();
                 })
@@ -44,13 +52,13 @@ namespace ConstruSys.Desktop
         {
             await _host.StartAsync();
 
-            using (IServiceScope scope = _host.Services.CreateScope())
-            {
-                AppDbContext dbContext =
-                    scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            using IServiceScope scope =
+                _host.Services.CreateScope();
 
-                await dbContext.Database.MigrateAsync();
-            }
+            AppDbContext dbContext =
+                scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            await dbContext.Database.MigrateAsync();
 
             MainWindow mainWindow =
                 _host.Services.GetRequiredService<MainWindow>();
