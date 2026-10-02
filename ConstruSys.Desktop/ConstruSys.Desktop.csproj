@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Converters\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Styles\" />
+    <Folder Include="Resources\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Views\Dashboard\" />
+    <Folder Include="Views\Clientes\" />
+    <Folder Include="Views\Estoque\" />
+    <Folder Include="Views\Fornecedores\" />
+    <Folder Include="Views\Compras\" />
+    <Folder Include="Views\Caixa\" />
+    <Folder Include="Views\Financeiro\" />
+    <Folder Include="Views\Configuracoes\" />
+    <Folder Include="Views\Orcamentos\" />
+    <Folder Include="Views\Vendas\" />
+    <Folder Include="Views\PDV\" />
+    <Folder Include="Views\Produtos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConstruSys.Application\ConstruSys.Application.csproj" />
+    <ProjectReference Include="..\ConstruSys.Domain\ConstruSys.Domain.csproj" />
+    <ProjectReference Include="..\ConstruSys.Infrastructure\ConstruSys.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

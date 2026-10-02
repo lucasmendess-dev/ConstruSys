@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ConstruSys.Application/ConstruSys.Application.csproj" />
+  <Project Path="ConstruSys.Desktop/ConstruSys.Desktop.csproj" />
+  <Project Path="ConstruSys.Domain/ConstruSys.Domain.csproj" />
+  <Project Path="ConstruSys.Infrastructure/ConstruSys.Infrastructure.csproj" />
+</Solution>
