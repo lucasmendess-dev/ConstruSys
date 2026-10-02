@@ -40,9 +40,12 @@ namespace ConstruSys.Infrastructure.Repositories
                 .Where(p =>
                     p.Nome.Contains(termo) ||
                     p.Codigo.Contains(termo) ||
-                    (p.CodigoBarras != null && p.CodigoBarras.Contains(termo)) ||
-                    (p.Marca != null && p.Marca.Contains(termo)) ||
-                    (p.Categoria != null && p.Categoria.Contains(termo)))
+                    (p.CodigoBarras != null &&
+                     p.CodigoBarras.Contains(termo)) ||
+                    (p.Marca != null &&
+                     p.Marca.Contains(termo)) ||
+                    (p.Categoria != null &&
+                     p.Categoria.Contains(termo)))
                 .OrderBy(p => p.Nome)
                 .ToListAsync();
         }
@@ -50,19 +53,22 @@ namespace ConstruSys.Infrastructure.Repositories
         public async Task AdicionarAsync(Produto produto)
         {
             _context.Produtos.Add(produto);
+
             await _context.SaveChangesAsync();
         }
 
         public async Task AtualizarAsync(Produto produto)
         {
             _context.Produtos.Update(produto);
+
             await _context.SaveChangesAsync();
         }
 
         public async Task ExcluirAsync(int id)
         {
-            Produto? produto = await _context.Produtos
-                .FirstOrDefaultAsync(p => p.Id == id);
+            Produto? produto =
+                await _context.Produtos
+                    .FirstOrDefaultAsync(p => p.Id == id);
 
             if (produto == null)
                 return;
@@ -72,14 +78,39 @@ namespace ConstruSys.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> CodigoExisteAsync(string codigo, int? ignorarId = null)
+        public async Task AlterarStatusAsync(
+            int id,
+            bool ativo)
         {
-            IQueryable<Produto> query = _context.Produtos
-                .AsNoTracking()
-                .Where(p => p.Codigo == codigo);
+            Produto? produto =
+                await _context.Produtos
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (produto == null)
+                throw new InvalidOperationException(
+                    "Produto não encontrado.");
+
+            produto.Ativo = ativo;
+            produto.DataAtualizacao = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CodigoExisteAsync(
+            string codigo,
+            int? ignorarId = null)
+        {
+            IQueryable<Produto> query =
+                _context.Produtos
+                    .AsNoTracking()
+                    .Where(p => p.Codigo == codigo);
 
             if (ignorarId.HasValue)
-                query = query.Where(p => p.Id != ignorarId.Value);
+            {
+                query =
+                    query.Where(
+                        p => p.Id != ignorarId.Value);
+            }
 
             return await query.AnyAsync();
         }
@@ -91,12 +122,18 @@ namespace ConstruSys.Infrastructure.Repositories
             if (string.IsNullOrWhiteSpace(codigoBarras))
                 return false;
 
-            IQueryable<Produto> query = _context.Produtos
-                .AsNoTracking()
-                .Where(p => p.CodigoBarras == codigoBarras);
+            IQueryable<Produto> query =
+                _context.Produtos
+                    .AsNoTracking()
+                    .Where(
+                        p => p.CodigoBarras == codigoBarras);
 
             if (ignorarId.HasValue)
-                query = query.Where(p => p.Id != ignorarId.Value);
+            {
+                query =
+                    query.Where(
+                        p => p.Id != ignorarId.Value);
+            }
 
             return await query.AnyAsync();
         }

@@ -10,6 +10,8 @@ namespace ConstruSys.Desktop.Views.Produtos
     {
         private readonly ProdutoService _produtoService;
 
+        private List<Produto> _produtos = new();
+
         public ProdutosView(
             ProdutoService produtoService)
         {
@@ -31,13 +33,13 @@ namespace ConstruSys.Desktop.Views.Produtos
         {
             try
             {
-                List<Produto> produtos =
-                    await _produtoService.ObterTodosAsync();
+                _produtos =
+                    await _produtoService
+                        .ObterTodosAsync();
 
-                GridProdutos.ItemsSource = produtos;
+                AtualizarIndicadores();
 
-                TxtTotalProdutos.Text =
-                    $"{produtos.Count} produto(s)";
+                AplicarFiltros();
             }
             catch (Exception ex)
             {
@@ -49,39 +51,126 @@ namespace ConstruSys.Desktop.Views.Produtos
             }
         }
 
-        private async Task PesquisarAsync()
+        private void AtualizarIndicadores()
         {
-            try
+            TxtCardTotal.Text =
+                _produtos.Count.ToString();
+
+            TxtCardAtivos.Text =
+                _produtos.Count(
+                    p => p.Ativo)
+                .ToString();
+
+            TxtCardEstoqueBaixo.Text =
+                _produtos.Count(
+                    p =>
+                        p.EstoqueAtual > 0 &&
+                        p.EstoqueAtual <=
+                        p.EstoqueMinimo)
+                .ToString();
+
+            TxtCardSemEstoque.Text =
+                _produtos.Count(
+                    p => p.EstoqueAtual <= 0)
+                .ToString();
+        }
+
+        private void AplicarFiltros()
+        {
+            IEnumerable<Produto> resultado =
+                _produtos;
+
+            string termo =
+                TxtPesquisa.Text
+                    .Trim()
+                    .ToLower();
+
+            if (!string.IsNullOrWhiteSpace(termo))
             {
-                string termo =
-                    TxtPesquisa.Text.Trim();
+                resultado =
+                    resultado.Where(p =>
+                        p.Nome
+                            .ToLower()
+                            .Contains(termo) ||
 
-                List<Produto> produtos =
-                    await _produtoService
-                        .PesquisarAsync(termo);
+                        p.Codigo
+                            .ToLower()
+                            .Contains(termo) ||
 
-                GridProdutos.ItemsSource =
-                    produtos;
+                        (p.CodigoBarras ?? "")
+                            .ToLower()
+                            .Contains(termo) ||
 
-                TxtTotalProdutos.Text =
-                    $"{produtos.Count} produto(s)";
+                        (p.Categoria ?? "")
+                            .ToLower()
+                            .Contains(termo) ||
+
+                        (p.Marca ?? "")
+                            .ToLower()
+                            .Contains(termo));
             }
-            catch (Exception ex)
+
+            string filtro =
+                (CmbFiltro.SelectedItem as ComboBoxItem)?
+                .Content?
+                .ToString()
+                ?? "Todos";
+
+            switch (filtro)
             {
-                MessageBox.Show(
-                    ex.Message,
-                    "ConstruSys",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                case "Ativos":
+
+                    resultado =
+                        resultado.Where(
+                            p => p.Ativo);
+
+                    break;
+
+                case "Inativos":
+
+                    resultado =
+                        resultado.Where(
+                            p => !p.Ativo);
+
+                    break;
+
+                case "Estoque baixo":
+
+                    resultado =
+                        resultado.Where(
+                            p =>
+                                p.EstoqueAtual > 0 &&
+                                p.EstoqueAtual <=
+                                p.EstoqueMinimo);
+
+                    break;
+
+                case "Sem estoque":
+
+                    resultado =
+                        resultado.Where(
+                            p => p.EstoqueAtual <= 0);
+
+                    break;
             }
+
+            List<Produto> lista =
+                resultado
+                    .OrderBy(p => p.Nome)
+                    .ToList();
+
+            GridProdutos.ItemsSource = lista;
+
+            TxtTotalProdutos.Text =
+                $"{lista.Count} produto(s)";
         }
 
         private void NovoProduto_Click(
             object sender,
             RoutedEventArgs e)
         {
-            JanelaProduto janela = new(
-                _produtoService);
+            JanelaProduto janela =
+                new(_produtoService);
 
             janela.Owner =
                 Window.GetWindow(this);
@@ -90,7 +179,9 @@ namespace ConstruSys.Desktop.Views.Produtos
                 janela.ShowDialog();
 
             if (resultado == true)
+            {
                 _ = CarregarProdutosAsync();
+            }
         }
 
         private async void EditarProduto_Click(
@@ -108,11 +199,20 @@ namespace ConstruSys.Desktop.Views.Produtos
                     .ObterPorIdAsync(produto.Id);
 
             if (produtoBanco == null)
-                return;
+            {
+                MessageBox.Show(
+                    "Produto não encontrado.",
+                    "ConstruSys",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
 
-            JanelaProduto janela = new(
-                _produtoService,
-                produtoBanco);
+                return;
+            }
+
+            JanelaProduto janela =
+                new(
+                    _produtoService,
+                    produtoBanco);
 
             janela.Owner =
                 Window.GetWindow(this);
@@ -121,10 +221,12 @@ namespace ConstruSys.Desktop.Views.Produtos
                 janela.ShowDialog();
 
             if (resultado == true)
+            {
                 await CarregarProdutosAsync();
+            }
         }
 
-        private async void ExcluirProduto_Click(
+        private async void AlterarStatusProduto_Click(
             object sender,
             RoutedEventArgs e)
         {
@@ -134,20 +236,30 @@ namespace ConstruSys.Desktop.Views.Produtos
                 return;
             }
 
-            MessageBoxResult resultado =
-                MessageBox.Show(
-                    $"Deseja realmente excluir o produto:\n\n{produto.Nome}?",
-                    "Excluir Produto",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
+            bool novoStatus =
+                !produto.Ativo;
 
-            if (resultado != MessageBoxResult.Yes)
+            string acao =
+                novoStatus
+                    ? "ativar"
+                    : "inativar";
+
+            MessageBoxResult confirmacao =
+                MessageBox.Show(
+                    $"Deseja realmente {acao} o produto:\n\n{produto.Nome}?",
+                    "ConstruSys",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+            if (confirmacao != MessageBoxResult.Yes)
                 return;
 
             try
             {
                 await _produtoService
-                    .ExcluirAsync(produto.Id);
+                    .AlterarStatusAsync(
+                        produto.Id,
+                        novoStatus);
 
                 await CarregarProdutosAsync();
             }
@@ -161,25 +273,28 @@ namespace ConstruSys.Desktop.Views.Produtos
             }
         }
 
-        private async void Pesquisar_Click(
+        private void Pesquisar_Click(
             object sender,
             RoutedEventArgs e)
         {
-            await PesquisarAsync();
+            AplicarFiltros();
         }
 
-        private async void TxtPesquisa_KeyUp(
+        private void TxtPesquisa_KeyUp(
             object sender,
             KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-                await PesquisarAsync();
+            AplicarFiltros();
+        }
 
-            if (string.IsNullOrWhiteSpace(
-                TxtPesquisa.Text))
-            {
-                await CarregarProdutosAsync();
-            }
+        private void CmbFiltro_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            AplicarFiltros();
         }
     }
 }

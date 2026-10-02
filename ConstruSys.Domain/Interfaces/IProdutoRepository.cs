@@ -16,8 +16,14 @@ namespace ConstruSys.Domain.Interfaces
 
         Task ExcluirAsync(int id);
 
-        Task<bool> CodigoExisteAsync(string codigo, int? ignorarId = null);
+        Task AlterarStatusAsync(int id, bool ativo);
 
-        Task<bool> CodigoBarrasExisteAsync(string codigoBarras, int? ignorarId = null);
+        Task<bool> CodigoExisteAsync(
+            string codigo,
+            int? ignorarId = null);
+
+        Task<bool> CodigoBarrasExisteAsync(
+            string codigoBarras,
+            int? ignorarId = null);
     }
 }

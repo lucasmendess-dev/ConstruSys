@@ -50,5 +50,27 @@
                 return ((PrecoVenda - PrecoCusto) / PrecoCusto) * 100;
             }
         }
+
+        public string StatusEstoque
+        {
+            get
+            {
+                if (EstoqueAtual <= 0)
+                    return "Sem estoque";
+
+                if (EstoqueAtual <= EstoqueMinimo)
+                    return "Estoque baixo";
+
+                return "Normal";
+            }
+        }
+
+        public string StatusCadastro
+        {
+            get
+            {
+                return Ativo ? "Ativo" : "Inativo";
+            }
+        }
     }
 }

@@ -90,6 +90,10 @@ namespace ConstruSys.Infrastructure.Data
                     .HasPrecision(18, 3);
 
                 entity.Ignore(x => x.MargemLucro);
+
+                entity.Ignore(x => x.StatusEstoque);
+                
+                entity.Ignore(x => x.StatusCadastro);
             });
         }
 
